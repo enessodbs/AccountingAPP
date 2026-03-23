@@ -123,7 +123,3 @@ Varsayılan şifreler için `ModelBuilderExtensions.cs` seed data'sını inceley
 - Flutter API URL'i build-time `--dart-define` ile konfigüre edilir
 - Parolalar BCrypt ile hash'lenerek saklanır
 - Production ortamında environment variables veya Azure Key Vault kullanmanız önerilir
-
-## 📄 Lisans
-
-Bu proje özel kullanım içindir.
