@@ -1,8 +1,11 @@
 class ApiConfig {
   // Backend API base URL
-  // Flutter Web'de localhost, backend ile aynı makinadaysa sorunsuz çalışır.
+  // Build-time override: flutter run --dart-define=API_BASE_URL=http://your-server/api
   // Android emülatör için 10.0.2.2 kullanılmalıdır.
-  static const String baseUrl = 'http://localhost:5188/api';
+  static const String baseUrl = String.fromEnvironment(
+    'API_BASE_URL',
+    defaultValue: 'http://localhost:5188/api',
+  );
 
   // Endpoint paths
   static const String auth = '$baseUrl/auth';

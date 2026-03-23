@@ -51,8 +51,7 @@ namespace AccountingApp.API.Data
                 new Role { Id = muhasebeRoleId, Name = "Muhasebe", CreatedAt = new DateTime(2025, 1, 1, 0, 0, 0, DateTimeKind.Utc), IsActive = true }
             );
 
-            // 4. Seed Admin User (Password: Admin123!)
-            // BCrypt hash for "Admin123!" generated with BCrypt.Net.BCrypt.HashPassword("Admin123!")
+            // 4. Seed Admin User (default credentials — change after first login)
             var adminUserId = Guid.Parse("33333333-3333-3333-3333-333333333333");
             var adminPasswordHash = BCrypt.Net.BCrypt.HashPassword("Admin123!");
 
@@ -198,7 +197,7 @@ namespace AccountingApp.API.Data
                 }
             );
 
-            // 8b. Seed İK User (ik_user / Ik123!)
+            // 8b. Seed İK User
             var ikUserId = Guid.Parse("66666666-6666-6666-6666-666666666666");
             var ikPasswordHash = BCrypt.Net.BCrypt.HashPassword("Ik123!");
 
@@ -238,7 +237,7 @@ namespace AccountingApp.API.Data
                 }
             );
 
-            // 8c. Seed Muhasebe User (muhasebe_user / Muhasebe123!)
+            // 8c. Seed Muhasebe User
             var muhasebeUserId = Guid.Parse("77777777-7777-7777-7777-777777777777");
             var muhasebePasswordHash = BCrypt.Net.BCrypt.HashPassword("Muhasebe123!");
 

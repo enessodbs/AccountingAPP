@@ -1,0 +1,55 @@
+# ─────────────────────────────────────────────
+# .NET
+# ─────────────────────────────────────────────
+bin/
+obj/
+*.user
+*.suo
+*.cache
+*.vs/
+.vs/
+*.DotSettings.user
+TestResults/
+publish/
+
+# Secrets & local config
+appsettings.Development.json
+appsettings.*.Local.json
+*.Local.json
+
+# ─────────────────────────────────────────────
+# Flutter / Dart
+# ─────────────────────────────────────────────
+**/build/
+**/.dart_tool/
+.flutter-plugins
+.flutter-plugins-dependencies
+.pub-cache/
+.pub/
+**/doc/api/
+coverage/
+*.class
+*.log
+
+# ─────────────────────────────────────────────
+# IDE
+# ─────────────────────────────────────────────
+.vscode/
+.idea/
+*.iml
+*.ipr
+*.iws
+
+# ─────────────────────────────────────────────
+# OS
+# ─────────────────────────────────────────────
+.DS_Store
+Thumbs.db
+Desktop.ini
+
+# ─────────────────────────────────────────────
+# Environment files
+# ─────────────────────────────────────────────
+.env
+.env.*
+!.env.example
