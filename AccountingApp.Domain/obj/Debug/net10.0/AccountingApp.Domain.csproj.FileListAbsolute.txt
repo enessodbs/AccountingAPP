@@ -1,0 +1,11 @@
+C:\Users\Enes\.gemini\antigravity\scratch\AccountingApp\AccountingApp.Domain\bin\Debug\net10.0\AccountingApp.Domain.deps.json
+C:\Users\Enes\.gemini\antigravity\scratch\AccountingApp\AccountingApp.Domain\bin\Debug\net10.0\AccountingApp.Domain.dll
+C:\Users\Enes\.gemini\antigravity\scratch\AccountingApp\AccountingApp.Domain\bin\Debug\net10.0\AccountingApp.Domain.pdb
+C:\Users\Enes\.gemini\antigravity\scratch\AccountingApp\AccountingApp.Domain\obj\Debug\net10.0\AccountingApp.Domain.GeneratedMSBuildEditorConfig.editorconfig
+C:\Users\Enes\.gemini\antigravity\scratch\AccountingApp\AccountingApp.Domain\obj\Debug\net10.0\AccountingApp.Domain.AssemblyInfoInputs.cache
+C:\Users\Enes\.gemini\antigravity\scratch\AccountingApp\AccountingApp.Domain\obj\Debug\net10.0\AccountingApp.Domain.AssemblyInfo.cs
+C:\Users\Enes\.gemini\antigravity\scratch\AccountingApp\AccountingApp.Domain\obj\Debug\net10.0\AccountingApp.Domain.csproj.CoreCompileInputs.cache
+C:\Users\Enes\.gemini\antigravity\scratch\AccountingApp\AccountingApp.Domain\obj\Debug\net10.0\AccountingApp.Domain.dll
+C:\Users\Enes\.gemini\antigravity\scratch\AccountingApp\AccountingApp.Domain\obj\Debug\net10.0\refint\AccountingApp.Domain.dll
+C:\Users\Enes\.gemini\antigravity\scratch\AccountingApp\AccountingApp.Domain\obj\Debug\net10.0\AccountingApp.Domain.pdb
+C:\Users\Enes\.gemini\antigravity\scratch\AccountingApp\AccountingApp.Domain\obj\Debug\net10.0\ref\AccountingApp.Domain.dll

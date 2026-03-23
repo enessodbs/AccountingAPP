@@ -1,0 +1,6 @@
+@AccountingApp.API_HostAddress = http://localhost:5188
+
+GET {{AccountingApp.API_HostAddress}}/weatherforecast/
+Accept: application/json
+
+###
