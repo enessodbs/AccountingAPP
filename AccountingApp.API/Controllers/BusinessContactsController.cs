@@ -116,7 +116,7 @@ namespace AccountingApp.API.Controllers
                 })
                 .ToListAsync();
 
-            var totalInvoiced = invoices.Sum(i => i.TotalAmount);
+            var totalInvoiced = invoices.Where(i => i.Status != (byte)InvoiceStatus.Cancelled).Sum(i => i.TotalAmount);
             var totalPaid = transactions.Sum(t => t.Amount);
 
             return Ok(new {

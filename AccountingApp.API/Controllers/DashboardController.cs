@@ -31,13 +31,13 @@ namespace AccountingApp.API.Controllers
 
             // Aylık gelir (Sales invoices marked as Paid)
             var monthlyIncome = await _context.Invoices
-                .Where(i => i.IsActive && i.Type == InvoiceType.Sales 
+                .Where(i => i.IsActive && i.Status != InvoiceStatus.Cancelled && i.Type == InvoiceType.Sales
                     && i.IssueDate >= startOfMonth && i.IssueDate < endOfMonth)
                 .SumAsync(i => (decimal?)i.TotalAmount) ?? 0;
 
             // Aylık gider (Purchase invoices)
             var monthlyExpense = await _context.Invoices
-                .Where(i => i.IsActive && i.Type == InvoiceType.Purchase 
+                .Where(i => i.IsActive && i.Status != InvoiceStatus.Cancelled && i.Type == InvoiceType.Purchase
                     && i.IssueDate >= startOfMonth && i.IssueDate < endOfMonth)
                 .SumAsync(i => (decimal?)i.TotalAmount) ?? 0;
 
@@ -153,12 +153,12 @@ namespace AccountingApp.API.Controllers
                 var endOfPeriod = startOfPeriod.AddMonths(1);
 
                 var income = await _context.Invoices
-                    .Where(inv => inv.IsActive && inv.Type == InvoiceType.Sales
+                    .Where(inv => inv.IsActive && inv.Status != InvoiceStatus.Cancelled && inv.Type == InvoiceType.Sales
                         && inv.IssueDate >= startOfPeriod && inv.IssueDate < endOfPeriod)
                     .SumAsync(inv => (decimal?)inv.TotalAmount) ?? 0;
 
                 var expense = await _context.Invoices
-                    .Where(inv => inv.IsActive && inv.Type == InvoiceType.Purchase
+                    .Where(inv => inv.IsActive && inv.Status != InvoiceStatus.Cancelled && inv.Type == InvoiceType.Purchase
                         && inv.IssueDate >= startOfPeriod && inv.IssueDate < endOfPeriod)
                     .SumAsync(inv => (decimal?)inv.TotalAmount) ?? 0;
 

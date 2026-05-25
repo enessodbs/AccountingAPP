@@ -4,16 +4,19 @@ using AccountingApp.API.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
 
-namespace AccountingApp.API.Migrations
+namespace AccountingApp.API.Data.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    partial class AppDbContextModelSnapshot : ModelSnapshot
+    [Migration("20260404102628_CrmModules")]
+    partial class CrmModules
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -1107,22 +1110,12 @@ namespace AccountingApp.API.Migrations
                     b.Property<DateTime>("CreatedAt")
                         .HasColumnType("datetime2");
 
-                    b.Property<string>("Description")
-                        .HasMaxLength(200)
-                        .HasColumnType("nvarchar(200)");
-
                     b.Property<bool>("IsActive")
                         .HasColumnType("bit");
 
                     b.Property<string>("Name")
                         .IsRequired()
-                        .HasMaxLength(50)
-                        .HasColumnType("nvarchar(50)");
-
-                    b.Property<string>("NormalizedName")
-                        .IsRequired()
-                        .HasMaxLength(50)
-                        .HasColumnType("nvarchar(50)");
+                        .HasColumnType("nvarchar(450)");
 
                     b.Property<DateTime?>("UpdatedAt")
                         .HasColumnType("datetime2");
@@ -1132,9 +1125,6 @@ namespace AccountingApp.API.Migrations
                     b.HasIndex("Name")
                         .IsUnique();
 
-                    b.HasIndex("NormalizedName")
-                        .IsUnique();
-
                     b.ToTable("Roles");
 
                     b.HasData(
@@ -1142,55 +1132,43 @@ namespace AccountingApp.API.Migrations
                         {
                             Id = new Guid("11111111-1111-1111-1111-111111111111"),
                             CreatedAt = new DateTime(2025, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
-                            Description = "Tam yetkili sistem yöneticisi",
                             IsActive = true,
-                            Name = "Admin",
-                            NormalizedName = "ADMIN"
+                            Name = "Admin"
                         },
                         new
                         {
                             Id = new Guid("22222222-2222-2222-2222-222222222222"),
                             CreatedAt = new DateTime(2025, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
-                            Description = "İnsan Kaynakları departmanı kullanıcıları",
                             IsActive = true,
-                            Name = "İK",
-                            NormalizedName = "İK"
+                            Name = "İK"
                         },
                         new
                         {
                             Id = new Guid("33333333-3333-3333-3333-333333333300"),
                             CreatedAt = new DateTime(2025, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
-                            Description = "Muhasebe ve finans departmanı kullanıcıları",
                             IsActive = true,
-                            Name = "Muhasebe",
-                            NormalizedName = "MUHASEBE"
+                            Name = "Muhasebe"
                         },
                         new
                         {
                             Id = new Guid("44444444-4444-4444-4444-444444444400"),
                             CreatedAt = new DateTime(2025, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
-                            Description = "Satış ekibi kullanıcıları",
                             IsActive = true,
-                            Name = "Satış",
-                            NormalizedName = "SATIŞ"
+                            Name = "Satış"
                         },
                         new
                         {
                             Id = new Guid("55555555-5555-5555-5555-555555555500"),
                             CreatedAt = new DateTime(2025, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
-                            Description = "Satış ekibi yöneticileri",
                             IsActive = true,
-                            Name = "SatışYönetici",
-                            NormalizedName = "SATIŞYÖNETICI"
+                            Name = "SatışYönetici"
                         },
                         new
                         {
                             Id = new Guid("66666666-6666-6666-6666-666666666600"),
                             CreatedAt = new DateTime(2025, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
-                            Description = "Pazarlama departmanı kullanıcıları",
                             IsActive = true,
-                            Name = "Pazarlama",
-                            NormalizedName = "PAZARLAMA"
+                            Name = "Pazarlama"
                         });
                 });
 
@@ -1307,37 +1285,21 @@ namespace AccountingApp.API.Migrations
 
                     b.Property<string>("Email")
                         .IsRequired()
-                        .HasMaxLength(100)
-                        .HasColumnType("nvarchar(100)");
-
-                    b.Property<string>("FullName")
-                        .HasMaxLength(100)
-                        .HasColumnType("nvarchar(100)");
+                        .HasColumnType("nvarchar(450)");
 
                     b.Property<bool>("IsActive")
                         .HasColumnType("bit");
 
-                    b.Property<DateTime?>("LastLoginAt")
-                        .HasColumnType("datetime2");
-
                     b.Property<string>("PasswordHash")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("RefreshToken")
-                        .HasMaxLength(500)
-                        .HasColumnType("nvarchar(500)");
-
-                    b.Property<DateTime?>("RefreshTokenExpiryTime")
-                        .HasColumnType("datetime2");
 
                     b.Property<DateTime?>("UpdatedAt")
                         .HasColumnType("datetime2");
 
                     b.Property<string>("Username")
                         .IsRequired()
-                        .HasMaxLength(50)
-                        .HasColumnType("nvarchar(50)");
+                        .HasColumnType("nvarchar(450)");
 
                     b.HasKey("Id");
 
@@ -1356,7 +1318,7 @@ namespace AccountingApp.API.Migrations
                             CreatedAt = new DateTime(2025, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
                             Email = "admin@accountingapp.com",
                             IsActive = true,
-                            PasswordHash = "$2a$11$mk3PUqvsc1pGI6b08XbH9.ImrAcZtIrA964VBMOAj8xbZxSuopudO",
+                            PasswordHash = "$2a$11$koNfdAoP.1.ckUBZSLIwduIR4GKtMOauvD6fZFou29hh8M7j2AykS",
                             Username = "admin"
                         },
                         new
@@ -1365,7 +1327,7 @@ namespace AccountingApp.API.Migrations
                             CreatedAt = new DateTime(2025, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
                             Email = "ik@accountingapp.com",
                             IsActive = true,
-                            PasswordHash = "$2a$11$Us.CwVgv4G00xhEixibLIu39NNjQt6Mr8xmaTGKSyU9NnWEBTu/G2",
+                            PasswordHash = "$2a$11$71RaisQvcS4OpejuTSid3eVHAMrMTaGSkpWAqPBlwNHQchQZrbgQi",
                             Username = "ik_user"
                         },
                         new
@@ -1374,7 +1336,7 @@ namespace AccountingApp.API.Migrations
                             CreatedAt = new DateTime(2025, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
                             Email = "muhasebe@accountingapp.com",
                             IsActive = true,
-                            PasswordHash = "$2a$11$PSjOaTMEZqyOZXDGGRI6OOLtwozmGobs6C9/Q5vbMasVIDD1FtV0O",
+                            PasswordHash = "$2a$11$Uw3bnxxukF1gCTS2gP/wFOSwZ.kCYfXHDPSfAUpgkTGIxaV3m910.",
                             Username = "muhasebe_user"
                         },
                         new
@@ -1383,7 +1345,7 @@ namespace AccountingApp.API.Migrations
                             CreatedAt = new DateTime(2025, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
                             Email = "satis@accountingapp.com",
                             IsActive = true,
-                            PasswordHash = "$2a$11$sEk7jmtDTQbPaSiPsaJ6nOrnvtpvclaPlvQgDMS6GDp/LaEuhX0w.",
+                            PasswordHash = "$2a$11$35rzVgkoa0neano8gb5fTuMwlbdEnc7Dk1u4bKN77cjtXMXrawMOi",
                             Username = "satis_user"
                         });
                 });

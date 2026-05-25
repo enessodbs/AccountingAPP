@@ -21,4 +21,11 @@ class ApiConfig {
   static const String businessContacts = '$baseUrl/businesscontacts';
   static const String stockMovements = '$baseUrl/stockmovements';
   static const String reports = '$baseUrl/reports';
+  static const String userManagement = '$baseUrl/usermanagement';
+  static const String leads = '$baseUrl/leads';
+  static const String opportunities = '$baseUrl/opportunities';
+  static const String pipelineStages = '$baseUrl/pipelinestages';
+  static const String activities = '$baseUrl/activities';
+  static const String crmTasks = '$baseUrl/crmtasks';
 }
+

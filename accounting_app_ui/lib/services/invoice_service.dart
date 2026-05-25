@@ -16,16 +16,31 @@ class InvoiceService {
     return headers;
   }
 
-  /// Faturaları getir. [type]: 1=Sales, 2=Purchase. [status]: 1=Pending, 2=Paid, 5=Issued, 6=ToBeIssued
-  Future<List<Invoice>> getInvoices({int? type, int? status}) async {
-    try {
-      var url = ApiConfig.invoices;
-      final params = <String>[];
-      if (type != null) params.add('type=$type');
-      if (status != null) params.add('status=$status');
-      if (params.isNotEmpty) url += '?${params.join('&')}';
+  static String _isoDate(DateTime d) =>
+      '${d.year.toString().padLeft(4, '0')}-${d.month.toString().padLeft(2, '0')}-${d.day.toString().padLeft(2, '0')}';
 
-      final response = await http.get(Uri.parse(url), headers: await _headers());
+  /// Faturaları getir. [type]: 1=Sales, 2=Purchase. [status]: 1=Pending, 2=Paid, 5=Issued, 6=ToBeIssued
+  /// [fromDate]/[toDate]: Fatura kesim tarihi (IssueDate) aralığı, uçlar dahil.
+  /// [excludeCancelled]: true ise iptal (status 3) faturalar dönmez; kâr/zarar ile uyum için kullanın.
+  Future<List<Invoice>> getInvoices({
+    int? type,
+    int? status,
+    DateTime? fromDate,
+    DateTime? toDate,
+    bool excludeCancelled = false,
+  }) async {
+    try {
+      final q = <String, String>{};
+      if (type != null) q['type'] = '$type';
+      if (status != null) q['status'] = '$status';
+      if (fromDate != null) q['fromDate'] = _isoDate(fromDate);
+      if (toDate != null) q['toDate'] = _isoDate(toDate);
+      if (excludeCancelled) q['excludeCancelled'] = 'true';
+      final uri = Uri.parse(ApiConfig.invoices).replace(
+        queryParameters: q.isEmpty ? null : q,
+      );
+
+      final response = await http.get(uri, headers: await _headers());
 
       if (response.statusCode == 200) {
         List<dynamic> body = jsonDecode(response.body);

@@ -241,9 +241,9 @@ class _DashboardScreenState extends State<DashboardScreen> {
 
     return Row(
       children: [
-        Expanded(child: _buildStatCard('Gelir', '₺$incomeText', colorScheme.secondary, Icons.arrow_upward)),
+        Expanded(child: _buildStatCard('Gelirler', '₺$incomeText', colorScheme.secondary, Icons.arrow_upward)),
         const SizedBox(width: 8),
-        Expanded(child: _buildStatCard('Gider', '₺$expenseText', colorScheme.error, Icons.arrow_downward)),
+        Expanded(child: _buildStatCard('Giderler', '₺$expenseText', colorScheme.error, Icons.arrow_downward)),
         const SizedBox(width: 8),
         Expanded(child: _buildClickablePendingCard(summary, theme)),
       ],
@@ -268,7 +268,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
               Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
-                  Text('Bekleyen', style: TextStyle(fontSize: 12, color: Colors.grey)),
+                  Text('Bekleyen Faturalar', style: TextStyle(fontSize: 12, color: Colors.grey)),
                   Icon(Icons.pending, color: const Color(0xFFF59E0B), size: 16),
                 ],
               ),
@@ -278,7 +278,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
                   Text('${summary.pendingInvoiceCount}',
                       style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold, color: Color(0xFFF59E0B))),
                   const SizedBox(width: 4),
-                  Text('Fatura', style: TextStyle(fontSize: 11, color: Colors.grey)),
+                  Text('Adet', style: TextStyle(fontSize: 11, color: Colors.grey)),
                   const Spacer(),
                   Icon(Icons.arrow_forward_ios, size: 12, color: Colors.grey[400]),
                 ],

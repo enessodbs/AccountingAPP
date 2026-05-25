@@ -23,14 +23,24 @@ namespace AccountingApp.API.Controllers
             _mapper = mapper;
         }
 
-        // GET: api/Invoices?type=1&status=5
+        // GET: api/Invoices?type=1&status=5&fromDate=2026-01-01&toDate=2026-01-31&excludeCancelled=true
         [HttpGet]
-        public async Task<ActionResult<IEnumerable<InvoiceListDto>>> GetInvoices([FromQuery] byte? type, [FromQuery] byte? status)
+        public async Task<ActionResult<IEnumerable<InvoiceListDto>>> GetInvoices(
+            [FromQuery] byte? type,
+            [FromQuery] byte? status,
+            [FromQuery] DateTime? fromDate,
+            [FromQuery] DateTime? toDate,
+            [FromQuery] bool excludeCancelled = false)
         {
             var query = _context.Invoices
                 .Include(i => i.BusinessContact)
                 .Include(i => i.Currency)
                 .Where(i => i.IsActive);
+
+            if (excludeCancelled)
+            {
+                query = query.Where(i => i.Status != InvoiceStatus.Cancelled);
+            }
 
             if (type.HasValue)
             {
@@ -40,6 +50,18 @@ namespace AccountingApp.API.Controllers
             if (status.HasValue)
             {
                 query = query.Where(i => (byte)i.Status == status.Value);
+            }
+
+            if (fromDate.HasValue)
+            {
+                var from = fromDate.Value.Date;
+                query = query.Where(i => i.IssueDate >= from);
+            }
+
+            if (toDate.HasValue)
+            {
+                var toExclusive = toDate.Value.Date.AddDays(1);
+                query = query.Where(i => i.IssueDate < toExclusive);
             }
 
             var invoices = await query.OrderByDescending(i => i.IssueDate).ToListAsync();

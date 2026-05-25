@@ -25,7 +25,7 @@ namespace AccountingApp.API.Controllers
             var y = year ?? DateTime.Now.Year;
 
             var invoices = await _context.Invoices
-                .Where(i => i.IsActive && i.IssueDate.Year == y)
+                .Where(i => i.IsActive && i.Status != InvoiceStatus.Cancelled && i.IssueDate.Year == y)
                 .ToListAsync();
 
             var monthlyData = Enumerable.Range(1, 12).Select(month =>
@@ -52,7 +52,7 @@ namespace AccountingApp.API.Controllers
             var y = year ?? DateTime.Now.Year;
 
             var invoices = await _context.Invoices
-                .Where(i => i.IsActive && i.IssueDate.Year == y)
+                .Where(i => i.IsActive && i.Status != InvoiceStatus.Cancelled && i.IssueDate.Year == y)
                 .ToListAsync();
 
             var monthlyData = Enumerable.Range(1, 12).Select(month =>

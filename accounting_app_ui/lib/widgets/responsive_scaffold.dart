@@ -10,9 +10,13 @@ import '../screens/products_screen.dart';
 import '../screens/transactions_screen.dart';
 import '../screens/business_contacts_screen.dart';
 import '../screens/reports_screen.dart';
+import '../screens/income_expense_table_screen.dart';
 import '../screens/currencies_screen.dart';
 import '../screens/quotes_screen.dart';
 import '../screens/barcode_stock_entry_screen.dart';
+import '../screens/user_management_screen.dart';
+import '../screens/leads_screen.dart';
+import '../screens/pipeline_board_screen.dart';
 
 /// A responsive scaffold that shows a persistent side rail on wide screens
 /// and a standard drawer on narrow ones.
@@ -64,6 +68,9 @@ class _ResponsiveScaffoldState extends State<ResponsiveScaffold> {
 
   String _getRoleBadge() {
     if (_userRoles.contains('Admin')) return 'Admin';
+    if (_userRoles.contains('SatışYönetici')) return 'Satış Yöneticisi';
+    if (_userRoles.contains('Satış')) return 'Satış';
+    if (_userRoles.contains('Pazarlama')) return 'Pazarlama';
     if (_userRoles.contains('Muhasebe')) return 'Muhasebe';
     if (_userRoles.contains('İK')) return 'İK';
     return '';
@@ -198,6 +205,7 @@ class _ResponsiveScaffoldState extends State<ResponsiveScaffold> {
                     _buildSideNavItem(theme, Icons.people_rounded, l.get('employees'), 'employees', const EmployeeListScreen(), extended),
                   if (_hasRole('Muhasebe')) ...[
                     _buildSideNavItem(theme, Icons.receipt_long_rounded, l.get('invoices'), 'invoices', const InvoicesScreen(), extended),
+                    _buildSideNavItem(theme, Icons.table_chart_rounded, l.get('incomeExpenseTable'), 'incomeExpense', const IncomeExpenseTableScreen(), extended),
                     _buildSideNavItem(theme, Icons.inventory_2_rounded, l.get('products'), 'products', const ProductsScreen(), extended),
                     _buildSideNavItem(theme, Icons.qr_code_scanner_rounded, l.get('barcodeStockEntry'), 'barcodeStock', const BarcodeStockEntryScreen(), extended),
                     _buildSideNavItem(theme, Icons.swap_horiz_rounded, l.get('transactions'), 'transactions', const TransactionsScreen(), extended),
@@ -206,6 +214,12 @@ class _ResponsiveScaffoldState extends State<ResponsiveScaffold> {
                     _buildSideNavItem(theme, Icons.currency_exchange_rounded, l.get('currencies'), 'currencies', const CurrenciesScreen(), extended),
                     _buildSideNavItem(theme, Icons.description_rounded, l.get('quotes'), 'quotes', const QuotesScreen(), extended),
                   ],
+                  if (_hasRole('Satış') || _hasRole('SatışYönetici') || _userRoles.contains('Admin')) ...[
+                    _buildSideNavItem(theme, Icons.person_search_rounded, l.get('leads'), 'leads', const LeadsScreen(), extended),
+                    _buildSideNavItem(theme, Icons.view_kanban_rounded, l.get('pipeline'), 'pipeline', const PipelineBoardScreen(), extended),
+                  ],
+                  if (_userRoles.contains('Admin'))
+                    _buildSideNavItem(theme, Icons.admin_panel_settings_rounded, l.get('userManagement'), 'userManagement', const UserManagementScreen(), extended),
                 ],
               ),
             ),
@@ -395,6 +409,7 @@ class _ResponsiveScaffoldState extends State<ResponsiveScaffold> {
                     _buildDrawerItem(context, theme, Icons.people_rounded, l.get('employees'), 'employees', const EmployeeListScreen()),
                   if (_hasRole('Muhasebe')) ...[
                     _buildDrawerItem(context, theme, Icons.receipt_long_rounded, l.get('invoices'), 'invoices', const InvoicesScreen()),
+                    _buildDrawerItem(context, theme, Icons.table_chart_rounded, l.get('incomeExpenseTable'), 'incomeExpense', const IncomeExpenseTableScreen()),
                     _buildDrawerItem(context, theme, Icons.inventory_2_rounded, l.get('products'), 'products', const ProductsScreen()),
                     _buildDrawerItem(context, theme, Icons.qr_code_scanner_rounded, l.get('barcodeStockEntry'), 'barcodeStock', const BarcodeStockEntryScreen()),
                     _buildDrawerItem(context, theme, Icons.swap_horiz_rounded, l.get('transactions'), 'transactions', const TransactionsScreen()),
@@ -403,6 +418,12 @@ class _ResponsiveScaffoldState extends State<ResponsiveScaffold> {
                     _buildDrawerItem(context, theme, Icons.currency_exchange_rounded, l.get('currencies'), 'currencies', const CurrenciesScreen()),
                     _buildDrawerItem(context, theme, Icons.description_rounded, l.get('quotes'), 'quotes', const QuotesScreen()),
                   ],
+                  if (_hasRole('Satış') || _hasRole('SatışYönetici') || _userRoles.contains('Admin')) ...[
+                    _buildDrawerItem(context, theme, Icons.person_search_rounded, l.get('leads'), 'leads', const LeadsScreen()),
+                    _buildDrawerItem(context, theme, Icons.view_kanban_rounded, l.get('pipeline'), 'pipeline', const PipelineBoardScreen()),
+                  ],
+                  if (_userRoles.contains('Admin'))
+                    _buildDrawerItem(context, theme, Icons.admin_panel_settings_rounded, l.get('userManagement'), 'userManagement', const UserManagementScreen()),
                   const Divider(height: 1),
                 ],
               ),

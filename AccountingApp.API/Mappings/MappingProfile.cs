@@ -77,6 +77,31 @@ namespace AccountingApp.API.Mappings
             
             CreateMap<BusinessContact, BusinessContactDto>().MaxDepth(64);
             CreateMap<BusinessContactCreateDto, BusinessContact>().MaxDepth(64);
+
+            // ======== CRM — Lead ========
+            CreateMap<LeadCreateDto, Lead>()
+                .MaxDepth(64)
+                .ForMember(dest => dest.Source, opt => opt.MapFrom(src => (LeadSource)src.Source))
+                .ForMember(dest => dest.Priority, opt => opt.MapFrom(src => (LeadPriority)src.Priority));
+
+            CreateMap<LeadUpdateDto, Lead>()
+                .MaxDepth(64)
+                .ForMember(dest => dest.Source, opt => opt.MapFrom(src => (LeadSource)src.Source))
+                .ForMember(dest => dest.Priority, opt => opt.MapFrom(src => (LeadPriority)src.Priority));
+
+            // ======== CRM — Activity ========
+            CreateMap<ActivityCreateDto, Activity>()
+                .MaxDepth(64)
+                .ForMember(dest => dest.Type, opt => opt.MapFrom(src => (ActivityType)src.Type));
+
+            // ======== CRM — CrmTask ========
+            CreateMap<CrmTaskCreateDto, CrmTask>()
+                .MaxDepth(64)
+                .ForMember(dest => dest.Priority, opt => opt.MapFrom(src => (CrmTaskPriority)src.Priority));
+
+            CreateMap<CrmTaskUpdateDto, CrmTask>()
+                .MaxDepth(64)
+                .ForMember(dest => dest.Priority, opt => opt.MapFrom(src => (CrmTaskPriority)src.Priority));
         }
     }
 }
