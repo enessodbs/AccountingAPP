@@ -8,7 +8,7 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
 
-namespace AccountingApp.API.Migrations
+namespace AccountingApp.API.Data.Migrations
 {
     [DbContext(typeof(AppDbContext))]
     partial class AppDbContextModelSnapshot : ModelSnapshot
@@ -1356,7 +1356,7 @@ namespace AccountingApp.API.Migrations
                             CreatedAt = new DateTime(2025, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
                             Email = "admin@accountingapp.com",
                             IsActive = true,
-                            PasswordHash = "$2a$11$mk3PUqvsc1pGI6b08XbH9.ImrAcZtIrA964VBMOAj8xbZxSuopudO",
+                            PasswordHash = "$2a$11$L.6riel0.Lhw13kLRZjpt.m0K.07Exkl4AEFn3D35DEh/CUMHD1sS",
                             Username = "admin"
                         },
                         new
@@ -1365,7 +1365,7 @@ namespace AccountingApp.API.Migrations
                             CreatedAt = new DateTime(2025, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
                             Email = "ik@accountingapp.com",
                             IsActive = true,
-                            PasswordHash = "$2a$11$Us.CwVgv4G00xhEixibLIu39NNjQt6Mr8xmaTGKSyU9NnWEBTu/G2",
+                            PasswordHash = "$2a$11$fBPZ3XhiulnPpaNDeB4bL.EHTW0vpiQG92zNUkFy2BHvrhZfvRrqm",
                             Username = "ik_user"
                         },
                         new
@@ -1374,7 +1374,7 @@ namespace AccountingApp.API.Migrations
                             CreatedAt = new DateTime(2025, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
                             Email = "muhasebe@accountingapp.com",
                             IsActive = true,
-                            PasswordHash = "$2a$11$PSjOaTMEZqyOZXDGGRI6OOLtwozmGobs6C9/Q5vbMasVIDD1FtV0O",
+                            PasswordHash = "$2a$11$ZRGbnZibF88Yqu8agWgSquZw1OWK.z4t1P27y/KIbz0UV8jJj9SL.",
                             Username = "muhasebe_user"
                         },
                         new
@@ -1383,7 +1383,7 @@ namespace AccountingApp.API.Migrations
                             CreatedAt = new DateTime(2025, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
                             Email = "satis@accountingapp.com",
                             IsActive = true,
-                            PasswordHash = "$2a$11$sEk7jmtDTQbPaSiPsaJ6nOrnvtpvclaPlvQgDMS6GDp/LaEuhX0w.",
+                            PasswordHash = "$2a$11$o0uDt/.QG5Va1VpD3Hbabuwu6cdixK.JHAHNPiSpyqv2KYhlegLe2",
                             Username = "satis_user"
                         });
                 });

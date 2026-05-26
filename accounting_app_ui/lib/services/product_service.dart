@@ -64,4 +64,25 @@ class ProductService {
       throw Exception('Hata: $e');
     }
   }
+
+  Future<void> addStockMovement(int productId, double quantity, int movementType) async {
+    try {
+      final response = await http.post(
+        Uri.parse(ApiConfig.stockMovements),
+        headers: await _headers(),
+        body: jsonEncode({
+          'productId': productId,
+          'quantity': quantity,
+          'movementType': movementType,
+          'description': 'Barkod tarama'
+        }),
+      );
+
+      if (response.statusCode != 200 && response.statusCode != 201) {
+        throw Exception('Stok hareketi oluşturulamadı: ${response.statusCode}');
+      }
+    } catch (e) {
+      throw Exception('Hata: $e');
+    }
+  }
 }

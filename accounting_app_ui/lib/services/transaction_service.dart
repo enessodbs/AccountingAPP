@@ -83,6 +83,33 @@ class TransactionService {
       throw Exception('Hata: $e');
     }
   }
+
+  /// Yeni İş Ortağı (Müşteri vb.) Ekle
+  Future<BusinessContactItem> createBusinessContact(String name, int type) async {
+    try {
+      final response = await http.post(
+        Uri.parse(ApiConfig.businessContacts),
+        headers: await _headers(),
+        body: jsonEncode({
+          'name': name,
+          'type': type,
+          'taxNumber': '',
+          'taxOffice': '',
+          'email': '',
+          'phone': '',
+          'address': '',
+        }),
+      );
+
+      if (response.statusCode == 201) {
+        return BusinessContactItem.fromJson(jsonDecode(response.body));
+      } else {
+        throw Exception('İş ortağı oluşturulamadı: ${response.statusCode}');
+      }
+    } catch (e) {
+      throw Exception('Hata: $e');
+    }
+  }
 }
 
 /// İş ortağı lookup modeli

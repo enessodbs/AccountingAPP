@@ -3,6 +3,7 @@ import '../services/crm_service.dart';
 import '../models/crm_models.dart';
 import '../widgets/responsive_scaffold.dart';
 import '../l10n/app_localizations.dart';
+import '../services/transaction_service.dart';
 
 class PipelineBoardScreen extends StatefulWidget {
   const PipelineBoardScreen({super.key});
@@ -39,15 +40,7 @@ class _PipelineBoardScreenState extends State<PipelineBoardScreen> {
     try {
       await _crmService.moveOpportunity(opp.id, newStageId);
       await _loadBoard();
-      if (mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(
-            content: Text('${opp.title} taşındı'),
-            duration: const Duration(seconds: 1),
-            behavior: SnackBarBehavior.floating,
-          ),
-        );
-      }
+      // Removed snackbar to prevent blocking the UI
     } catch (e) {
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
@@ -472,87 +465,178 @@ class _PipelineBoardScreenState extends State<PipelineBoardScreen> {
     final descCtl = TextEditingController();
     int probability = 50;
 
+    String? selectedContactId;
+    List<BusinessContactItem> contacts = [];
+    bool isLoadingContacts = true;
+    bool hasLoadedContactsOnce = false;
+    final transactionService = TransactionService();
+
     showDialog(
       context: context,
       builder: (ctx) => StatefulBuilder(
-        builder: (ctx, setDialogState) => AlertDialog(
-          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
-          title: Text(l.get('newOpportunity')),
-          content: SingleChildScrollView(
-            child: Column(
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                TextField(
-                  controller: titleCtl,
-                  decoration: InputDecoration(
-                    labelText: 'Başlık',
-                    border: OutlineInputBorder(borderRadius: BorderRadius.circular(8)),
-                  ),
-                ),
-                const SizedBox(height: 10),
-                TextField(
-                  controller: amountCtl,
-                  keyboardType: TextInputType.number,
-                  decoration: InputDecoration(
-                    labelText: l.get('amount'),
-                    prefixText: '₺ ',
-                    border: OutlineInputBorder(borderRadius: BorderRadius.circular(8)),
-                  ),
-                ),
-                const SizedBox(height: 10),
-                Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text('${l.get('probability')}: %$probability',
-                        style: const TextStyle(fontSize: 12)),
-                    Slider(
-                      value: probability.toDouble(),
-                      min: 0, max: 100, divisions: 20,
-                      label: '%$probability',
-                      onChanged: (v) => setDialogState(() => probability = v.round()),
+        builder: (ctx, setDialogState) {
+          if (!hasLoadedContactsOnce) {
+            hasLoadedContactsOnce = true;
+            transactionService.getBusinessContacts().then((loaded) {
+              if (ctx.mounted) {
+                setDialogState(() {
+                  contacts = loaded;
+                  isLoadingContacts = false;
+                });
+              }
+            }).catchError((_) {
+              if (ctx.mounted) {
+                setDialogState(() {
+                  isLoadingContacts = false;
+                });
+              }
+            });
+          }
+
+          return AlertDialog(
+            shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
+            title: Text(l.get('newOpportunity')),
+            content: SingleChildScrollView(
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  TextField(
+                    controller: titleCtl,
+                    decoration: InputDecoration(
+                      labelText: 'Başlık',
+                      border: OutlineInputBorder(borderRadius: BorderRadius.circular(8)),
                     ),
-                  ],
-                ),
-                const SizedBox(height: 10),
-                TextField(
-                  controller: descCtl,
-                  maxLines: 3,
-                  decoration: InputDecoration(
-                    labelText: 'Açıklama',
-                    border: OutlineInputBorder(borderRadius: BorderRadius.circular(8)),
                   ),
-                ),
-              ],
+                  const SizedBox(height: 10),
+                  // Dropdown for Customer
+                  isLoadingContacts
+                      ? const Padding(
+                          padding: EdgeInsets.all(8.0),
+                          child: CircularProgressIndicator(),
+                        )
+                      : Row(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Expanded(
+                              child: DropdownButtonFormField<String>(
+                                value: selectedContactId,
+                                decoration: InputDecoration(
+                                  labelText: 'Müşteri',
+                                  isDense: true,
+                                  border: OutlineInputBorder(borderRadius: BorderRadius.circular(8)),
+                                ),
+                                items: contacts.map((c) => DropdownMenuItem(
+                                  value: c.id,
+                                  child: Text(c.name, style: const TextStyle(fontSize: 13), overflow: TextOverflow.ellipsis),
+                                )).toList(),
+                                onChanged: (v) => setDialogState(() => selectedContactId = v),
+                              ),
+                            ),
+                            IconButton(
+                              icon: const Icon(Icons.add_box, color: Colors.blue),
+                              onPressed: () {
+                                final nameCtrl = TextEditingController();
+                                showDialog(
+                                  context: ctx,
+                                  builder: (innerCtx) => AlertDialog(
+                                    title: const Text('Yeni Müşteri/İş Ortağı', style: TextStyle(fontSize: 14)),
+                                    content: TextField(
+                                      controller: nameCtrl,
+                                      decoration: const InputDecoration(labelText: 'Müşteri Adı', isDense: true, border: OutlineInputBorder()),
+                                    ),
+                                    actions: [
+                                      TextButton(onPressed: () => Navigator.pop(innerCtx), child: const Text('İptal')),
+                                      FilledButton(
+                                        onPressed: () async {
+                                          if (nameCtrl.text.isEmpty) return;
+                                          try {
+                                            final newContact = await transactionService.createBusinessContact(nameCtrl.text, 1);
+                                            Navigator.pop(innerCtx);
+                                            setDialogState(() {
+                                              contacts.add(newContact);
+                                              selectedContactId = newContact.id;
+                                            });
+                                          } catch (e) {
+                                            ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(e.toString())));
+                                          }
+                                        },
+                                        child: const Text('Ekle'),
+                                      ),
+                                    ],
+                                  ),
+                                );
+                              },
+                            ),
+                          ],
+                        ),
+                  const SizedBox(height: 10),
+                  TextField(
+                    controller: amountCtl,
+                    keyboardType: TextInputType.number,
+                    decoration: InputDecoration(
+                      labelText: l.get('amount'),
+                      prefixText: '₺ ',
+                      border: OutlineInputBorder(borderRadius: BorderRadius.circular(8)),
+                    ),
+                  ),
+                  const SizedBox(height: 10),
+                  Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text('${l.get('probability')}: %$probability',
+                          style: const TextStyle(fontSize: 12)),
+                      Slider(
+                        value: probability.toDouble(),
+                        min: 0, max: 100, divisions: 20,
+                        label: '%$probability',
+                        onChanged: (v) => setDialogState(() => probability = v.round()),
+                      ),
+                    ],
+                  ),
+                  const SizedBox(height: 10),
+                  TextField(
+                    controller: descCtl,
+                    maxLines: 3,
+                    decoration: InputDecoration(
+                      labelText: 'Açıklama',
+                      border: OutlineInputBorder(borderRadius: BorderRadius.circular(8)),
+                    ),
+                  ),
+                ],
+              ),
             ),
-          ),
-          actions: [
-            TextButton(onPressed: () => Navigator.pop(ctx), child: const Text('İptal')),
-            FilledButton(
-              onPressed: () async {
-                if (titleCtl.text.isEmpty) return;
-                try {
-                  await _crmService.createOpportunity({
-                    'title': titleCtl.text,
-                    'amount': double.tryParse(amountCtl.text) ?? 0,
-                    'probability': probability,
-                    'description': descCtl.text,
-                    'stageId': _columns.isNotEmpty ? _columns.first.stageId : 1,
-                    'contactId': 'aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaaa', // placeholder - seed customer
-                  });
-                  if (ctx.mounted) Navigator.pop(ctx);
-                  _loadBoard();
-                } catch (e) {
-                  if (mounted) {
-                    ScaffoldMessenger.of(context).showSnackBar(
-                      SnackBar(content: Text('Hata: $e')),
-                    );
+            actions: [
+              TextButton(onPressed: () => Navigator.pop(ctx), child: const Text('İptal')),
+              FilledButton(
+                onPressed: () async {
+                  if (titleCtl.text.isEmpty || selectedContactId == null) {
+                    ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text('Lütfen başlık ve müşteri seçin')));
+                    return;
                   }
-                }
-              },
-              child: const Text('Oluştur'),
-            ),
-          ],
-        ),
+                  try {
+                    await _crmService.createOpportunity({
+                      'title': titleCtl.text,
+                      'amount': double.tryParse(amountCtl.text) ?? 0,
+                      'probability': probability,
+                      'description': descCtl.text,
+                      'stageId': _columns.isNotEmpty ? _columns.first.stageId : 1,
+                      'contactId': selectedContactId,
+                    });
+                    if (ctx.mounted) Navigator.pop(ctx);
+                    _loadBoard();
+                  } catch (e) {
+                    if (mounted) {
+                      ScaffoldMessenger.of(context).showSnackBar(
+                        SnackBar(content: Text('Hata: $e')),
+                      );
+                    }
+                  }
+                },
+                child: const Text('Oluştur'),
+              ),
+            ],
+          );
+        },
       ),
     );
   }

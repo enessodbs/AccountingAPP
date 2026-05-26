@@ -132,7 +132,7 @@ namespace AccountingApp.API.Controllers
             foreach (var roleName in roleNames)
             {
                 var role = await _context.Roles
-                    .FirstOrDefaultAsync(r => r.NormalizedName == roleName.Trim().ToUpperInvariant() && r.IsActive);
+                    .FirstOrDefaultAsync(r => r.Name == roleName.Trim() && r.IsActive);
 
                 if (role == null)
                     return BadRequest(new { message = $"'{roleName}' adında aktif bir rol bulunamadı." });
@@ -214,7 +214,7 @@ namespace AccountingApp.API.Controllers
             foreach (var roleName in dto.RoleNames)
             {
                 var role = await _context.Roles
-                    .FirstOrDefaultAsync(r => r.NormalizedName == roleName.Trim().ToUpperInvariant() && r.IsActive);
+                    .FirstOrDefaultAsync(r => r.Name == roleName.Trim() && r.IsActive);
 
                 if (role == null)
                     return BadRequest(new { message = $"'{roleName}' adında aktif bir rol bulunamadı." });

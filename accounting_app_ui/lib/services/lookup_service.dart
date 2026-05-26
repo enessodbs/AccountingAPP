@@ -40,4 +40,28 @@ class LookupService {
     }
     throw Exception('Kategoriler yüklenemedi: ${response.statusCode}');
   }
+
+  Future<DepartmentLookup> createDepartment(String name) async {
+    final response = await http.post(
+      Uri.parse(ApiConfig.departments),
+      headers: await _headers(),
+      body: jsonEncode({'name': name}),
+    );
+    if (response.statusCode == 201 || response.statusCode == 200) {
+      return DepartmentLookup.fromJson(jsonDecode(response.body));
+    }
+    throw Exception('Departman oluşturulamadı: ${response.statusCode}');
+  }
+
+  Future<PositionLookup> createPosition(String name, int departmentId) async {
+    final response = await http.post(
+      Uri.parse(ApiConfig.positions),
+      headers: await _headers(),
+      body: jsonEncode({'name': name, 'departmentId': departmentId}),
+    );
+    if (response.statusCode == 201 || response.statusCode == 200) {
+      return PositionLookup.fromJson(jsonDecode(response.body));
+    }
+    throw Exception('Pozisyon oluşturulamadı: ${response.statusCode}');
+  }
 }

@@ -68,7 +68,6 @@ namespace AccountingApp.API.DTOs
         public string TaxNumber { get; set; } = string.Empty;
         public string TaxOffice { get; set; } = string.Empty;
 
-        [EmailAddress]
         public string Email { get; set; } = string.Empty;
 
         public string Phone { get; set; } = string.Empty;

@@ -62,7 +62,7 @@ class _BarcodeStockEntryScreenState extends State<BarcodeStockEntryScreen> {
     }
   }
 
-  void _applyStockChange() {
+  Future<void> _applyStockChange() async {
     if (_foundProduct == null) return;
     final qty = double.tryParse(_quantityController.text) ?? 0;
     if (qty <= 0) {
@@ -72,30 +72,46 @@ class _BarcodeStockEntryScreenState extends State<BarcodeStockEntryScreen> {
       return;
     }
 
-    final record = _ScanRecord(
-      productName: _foundProduct!.name,
-      productCode: _foundProduct!.code,
-      barcode: _barcodeController.text,
-      quantity: qty,
-      isStockIn: _isStockIn,
-      time: DateTime.now(),
-    );
+    try {
+      await _productService.addStockMovement(
+        _foundProduct!.id,
+        qty,
+        _isStockIn ? 1 : 2, // 1: In, 2: Out
+      );
 
-    setState(() {
-      _recentScans.insert(0, record);
-      _barcodeController.clear();
-      _foundProduct = null;
-      _quantityController.text = '1';
-    });
+      final record = _ScanRecord(
+        productName: _foundProduct!.name,
+        productCode: _foundProduct!.code,
+        barcode: _barcodeController.text,
+        quantity: qty,
+        isStockIn: _isStockIn,
+        time: DateTime.now(),
+      );
 
-    ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(
-        content: Text(
-          '${record.productName}: ${_isStockIn ? "+" : "-"}${qty.toStringAsFixed(0)} adet',
-        ),
-        backgroundColor: _isStockIn ? Colors.green : Colors.orange,
-      ),
-    );
+      if (mounted) {
+        setState(() {
+          _recentScans.insert(0, record);
+          _barcodeController.clear();
+          _foundProduct = null;
+          _quantityController.text = '1';
+        });
+
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text(
+              '${record.productName}: ${_isStockIn ? "+" : "-"}${qty.toStringAsFixed(0)} adet',
+            ),
+            backgroundColor: _isStockIn ? Colors.green : Colors.orange,
+          ),
+        );
+      }
+    } catch (e) {
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text(e.toString()), backgroundColor: Colors.red),
+        );
+      }
+    }
   }
 
   @override

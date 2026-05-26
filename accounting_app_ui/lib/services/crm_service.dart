@@ -105,6 +105,24 @@ class CrmService {
     }
   }
 
+  Future<void> convertLead(String id) async {
+    try {
+      final response = await http.post(
+        Uri.parse('${ApiConfig.leads}/$id/convert'),
+        headers: await _headers(),
+        body: jsonEncode({
+          'createOpportunity': false,
+        }),
+      );
+
+      if (response.statusCode != 200 && response.statusCode != 201) {
+        throw Exception('Lead dönüştürülemedi: ${response.statusCode}');
+      }
+    } catch (e) {
+      throw Exception('Hata: $e');
+    }
+  }
+
   Future<void> deleteLead(String id) async {
     try {
       final response = await http.delete(

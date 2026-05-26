@@ -258,7 +258,11 @@ class _EmployeeListScreenState extends State<EmployeeListScreen> {
                       TextFormField(
                         controller: idNoCtrl,
                         decoration: const InputDecoration(labelText: 'TC Kimlik No', isDense: true, border: OutlineInputBorder()),
-                        validator: (v) => (v == null || v.isEmpty) ? 'Zorunlu' : null,
+                        validator: (v) {
+                          if (v == null || v.isEmpty) return 'Zorunlu';
+                          if (v.length != 11) return '11 haneli olmalıdır';
+                          return null;
+                        },
                         keyboardType: TextInputType.number,
                         maxLength: 11,
                       ),
@@ -287,29 +291,87 @@ class _EmployeeListScreenState extends State<EmployeeListScreen> {
                         controller: emailCtrl,
                         decoration: const InputDecoration(labelText: 'E-posta', isDense: true, border: OutlineInputBorder()),
                         keyboardType: TextInputType.emailAddress,
+                        validator: (v) {
+                          if (v != null && v.isNotEmpty) {
+                            if (!RegExp(r'^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$').hasMatch(v)) {
+                              return 'Geçerli e-posta giriniz';
+                            }
+                          }
+                          return null;
+                        },
                       ),
                       const SizedBox(height: 8),
                       TextFormField(
                         controller: phoneCtrl,
                         decoration: const InputDecoration(labelText: 'Telefon', isDense: true, border: OutlineInputBorder()),
                         keyboardType: TextInputType.phone,
+                        inputFormatters: [FilteringTextInputFormatter.digitsOnly],
                       ),
                       const SizedBox(height: 8),
                       TextFormField(
                         controller: salaryCtrl,
                         decoration: const InputDecoration(labelText: 'Maaş (₺)', isDense: true, border: OutlineInputBorder()),
                         keyboardType: TextInputType.number,
+                        inputFormatters: [FilteringTextInputFormatter.allow(RegExp(r'^\d+[\.,]?\d*'))],
+                        validator: (v) {
+                          if (v != null && v.isNotEmpty) {
+                            if (double.tryParse(v.replaceAll(',', '.')) == null) {
+                              return 'Geçerli bir sayı giriniz';
+                            }
+                          }
+                          return null;
+                        },
                       ),
                       const SizedBox(height: 8),
                       // Dynamic department dropdown from API
-                      DropdownButtonFormField<int>(
-                        value: selectedDeptId,
-                        decoration: const InputDecoration(labelText: 'Departman', isDense: true, border: OutlineInputBorder()),
-                        items: _departments.map((dept) =>
-                          DropdownMenuItem(value: dept.id, child: Text(dept.name, style: const TextStyle(fontSize: 13)))
-                        ).toList(),
-                        onChanged: onDepartmentChanged,
-                        validator: (v) => v == null ? 'Zorunlu' : null,
+                      Row(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Expanded(
+                            child: DropdownButtonFormField<int>(
+                              value: selectedDeptId,
+                              decoration: const InputDecoration(labelText: 'Departman', isDense: true, border: OutlineInputBorder()),
+                              items: _departments.map((dept) =>
+                                DropdownMenuItem(value: dept.id, child: Text(dept.name, style: const TextStyle(fontSize: 13)))
+                              ).toList(),
+                              onChanged: onDepartmentChanged,
+                              validator: (v) => v == null ? 'Zorunlu' : null,
+                            ),
+                          ),
+                          IconButton(
+                            icon: const Icon(Icons.add_box, color: Colors.blue),
+                            onPressed: () {
+                              final nameCtrl = TextEditingController();
+                              showDialog(
+                                context: context,
+                                builder: (ctx) => AlertDialog(
+                                  title: const Text('Yeni Departman', style: TextStyle(fontSize: 14)),
+                                  content: TextField(
+                                    controller: nameCtrl,
+                                    decoration: const InputDecoration(labelText: 'Departman Adı', isDense: true, border: OutlineInputBorder()),
+                                  ),
+                                  actions: [
+                                    TextButton(onPressed: () => Navigator.pop(ctx), child: const Text('İptal')),
+                                    FilledButton(
+                                      onPressed: () async {
+                                        if (nameCtrl.text.isEmpty) return;
+                                        try {
+                                          final newDept = await _lookupService.createDepartment(nameCtrl.text);
+                                          Navigator.pop(ctx);
+                                          setState(() => _departments.add(newDept));
+                                          onDepartmentChanged(newDept.id);
+                                        } catch (e) {
+                                          ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(e.toString())));
+                                        }
+                                      },
+                                      child: const Text('Ekle'),
+                                    ),
+                                  ],
+                                ),
+                              );
+                            },
+                          ),
+                        ],
                       ),
                       const SizedBox(height: 8),
                       // Dynamic position dropdown — filtered by selected department
@@ -319,20 +381,62 @@ class _EmployeeListScreenState extends State<EmployeeListScreen> {
                           child: SizedBox(height: 20, width: 20, child: CircularProgressIndicator(strokeWidth: 2)),
                         )
                       else
-                        DropdownButtonFormField<int>(
-                          value: selectedPosId,
-                          decoration: InputDecoration(
-                            labelText: 'Pozisyon',
-                            isDense: true,
-                            border: const OutlineInputBorder(),
-                            helperText: selectedDeptId == null ? 'Önce departman seçin' : null,
-                            helperStyle: const TextStyle(fontSize: 11, color: Colors.grey),
-                          ),
-                          items: availablePositions.map((pos) =>
-                            DropdownMenuItem(value: pos.id, child: Text(pos.name, style: const TextStyle(fontSize: 13)))
-                          ).toList(),
-                          onChanged: selectedDeptId == null ? null : (v) => setDialogState(() => selectedPosId = v),
-                          validator: (v) => v == null ? 'Zorunlu' : null,
+                        Row(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Expanded(
+                              child: DropdownButtonFormField<int>(
+                                value: selectedPosId,
+                                decoration: InputDecoration(
+                                  labelText: 'Pozisyon',
+                                  isDense: true,
+                                  border: const OutlineInputBorder(),
+                                  helperText: selectedDeptId == null ? 'Önce departman seçin' : null,
+                                  helperStyle: const TextStyle(fontSize: 11, color: Colors.grey),
+                                ),
+                                items: availablePositions.map((pos) =>
+                                  DropdownMenuItem(value: pos.id, child: Text(pos.name, style: const TextStyle(fontSize: 13)))
+                                ).toList(),
+                                onChanged: selectedDeptId == null ? null : (v) => setDialogState(() => selectedPosId = v),
+                                validator: (v) => v == null ? 'Zorunlu' : null,
+                              ),
+                            ),
+                            IconButton(
+                              icon: Icon(Icons.add_box, color: selectedDeptId == null ? Colors.grey : Colors.blue),
+                              onPressed: selectedDeptId == null ? null : () {
+                                final nameCtrl = TextEditingController();
+                                showDialog(
+                                  context: context,
+                                  builder: (ctx) => AlertDialog(
+                                    title: const Text('Yeni Pozisyon', style: TextStyle(fontSize: 14)),
+                                    content: TextField(
+                                      controller: nameCtrl,
+                                      decoration: const InputDecoration(labelText: 'Pozisyon Adı', isDense: true, border: OutlineInputBorder()),
+                                    ),
+                                    actions: [
+                                      TextButton(onPressed: () => Navigator.pop(ctx), child: const Text('İptal')),
+                                      FilledButton(
+                                        onPressed: () async {
+                                          if (nameCtrl.text.isEmpty) return;
+                                          try {
+                                            final newPos = await _lookupService.createPosition(nameCtrl.text, selectedDeptId!);
+                                            Navigator.pop(ctx);
+                                            setDialogState(() {
+                                              availablePositions.add(newPos);
+                                              selectedPosId = newPos.id;
+                                            });
+                                          } catch (e) {
+                                            ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(e.toString())));
+                                          }
+                                        },
+                                        child: const Text('Ekle'),
+                                      ),
+                                    ],
+                                  ),
+                                );
+                              },
+                            ),
+                          ],
                         ),
                     ],
                   ),

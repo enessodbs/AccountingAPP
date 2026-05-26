@@ -42,5 +42,21 @@ namespace AccountingApp.API.Controllers
 
             return Ok(_mapper.Map<DepartmentDto>(department));
         }
+
+        [HttpPost]
+        [Authorize(Roles = "Admin,İK")]
+        public async Task<ActionResult<DepartmentDto>> CreateDepartment([FromBody] DepartmentCreateDto dto)
+        {
+            var dept = new Department
+            {
+                Name = dto.Name,
+                IsActive = true
+            };
+
+            _context.Departments.Add(dept);
+            await _context.SaveChangesAsync();
+
+            return CreatedAtAction(nameof(GetDepartment), new { id = dept.Id }, _mapper.Map<DepartmentDto>(dept));
+        }
     }
 }

@@ -4,6 +4,7 @@ import 'package:http/http.dart' as http;
 import '../config/api_config.dart';
 import '../services/auth_service.dart';
 import '../widgets/responsive_scaffold.dart';
+import '../services/transaction_service.dart';
 
 class BusinessContactsScreen extends StatefulWidget {
   const BusinessContactsScreen({super.key});
@@ -94,6 +95,85 @@ class _BusinessContactsScreenState extends State<BusinessContactsScreen> {
                 },
               ),
             ),
+      floatingActionButton: FloatingActionButton.extended(
+        onPressed: () => _showAddContactDialog(context),
+        icon: const Icon(Icons.domain_add),
+        label: const Text('Yeni Ekle'),
+      ),
+    );
+  }
+
+  void _showAddContactDialog(BuildContext context) {
+    final formKey = GlobalKey<FormState>();
+    final nameCtrl = TextEditingController();
+    int selectedType = 1; // 1: Müşteri, 2: Tedarikçi, 3: Diğer
+
+    showDialog(
+      context: context,
+      builder: (ctx) => StatefulBuilder(
+        builder: (ctx, setDialogState) => AlertDialog(
+          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
+          title: const Text('Yeni İş Ortağı', style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold)),
+          content: Form(
+            key: formKey,
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                TextFormField(
+                  controller: nameCtrl,
+                  decoration: InputDecoration(
+                    labelText: 'Firma / Şahıs Adı',
+                    isDense: true,
+                    border: OutlineInputBorder(borderRadius: BorderRadius.circular(8)),
+                    prefixIcon: const Icon(Icons.business, size: 18),
+                  ),
+                  validator: (v) => (v == null || v.isEmpty) ? 'Zorunlu alan' : null,
+                ),
+                const SizedBox(height: 16),
+                DropdownButtonFormField<int>(
+                  value: selectedType,
+                  decoration: InputDecoration(
+                    labelText: 'Türü',
+                    isDense: true,
+                    border: OutlineInputBorder(borderRadius: BorderRadius.circular(8)),
+                  ),
+                  items: const [
+                    DropdownMenuItem(value: 1, child: Text('Müşteri (Alıcı)', style: TextStyle(fontSize: 13))),
+                    DropdownMenuItem(value: 2, child: Text('Tedarikçi (Satıcı)', style: TextStyle(fontSize: 13))),
+                    DropdownMenuItem(value: 3, child: Text('Diğer', style: TextStyle(fontSize: 13))),
+                  ],
+                  onChanged: (v) => setDialogState(() => selectedType = v ?? 1),
+                ),
+              ],
+            ),
+          ),
+          actions: [
+            TextButton(onPressed: () => Navigator.pop(ctx), child: const Text('İptal')),
+            FilledButton(
+              onPressed: () async {
+                if (!formKey.currentState!.validate()) return;
+                try {
+                  await TransactionService().createBusinessContact(nameCtrl.text.trim(), selectedType);
+                  if (mounted) {
+                    Navigator.pop(ctx);
+                    ScaffoldMessenger.of(context).showSnackBar(
+                      const SnackBar(content: Text('İş ortağı eklendi!'), backgroundColor: Colors.green),
+                    );
+                  }
+                  _loadContacts();
+                } catch (e) {
+                  if (mounted) {
+                    ScaffoldMessenger.of(context).showSnackBar(
+                      SnackBar(content: Text(e.toString()), backgroundColor: Colors.red),
+                    );
+                  }
+                }
+              },
+              child: const Text('Ekle'),
+            ),
+          ],
+        ),
+      ),
     );
   }
 }

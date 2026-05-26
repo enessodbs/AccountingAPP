@@ -48,5 +48,28 @@ namespace AccountingApp.API.Controllers
 
             return Ok(_mapper.Map<PositionDto>(position));
         }
+
+        [HttpPost]
+        [Authorize(Roles = "Admin,İK")]
+        public async Task<ActionResult<PositionDto>> CreatePosition([FromBody] PositionCreateDto dto)
+        {
+            var dept = await _context.Departments.FindAsync(dto.DepartmentId);
+            if (dept == null || !dept.IsActive)
+                return BadRequest("Geçersiz departman.");
+
+            var position = new Position
+            {
+                Name = dto.Name,
+                DepartmentId = dto.DepartmentId,
+                IsActive = true
+            };
+
+            _context.Positions.Add(position);
+            await _context.SaveChangesAsync();
+
+            position.Department = dept;
+
+            return CreatedAtAction(nameof(GetPosition), new { id = position.Id }, _mapper.Map<PositionDto>(position));
+        }
     }
 }

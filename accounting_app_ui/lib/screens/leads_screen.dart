@@ -4,6 +4,7 @@ import 'package:intl/intl.dart';
 import '../models/crm_models.dart';
 import '../services/crm_service.dart';
 import '../widgets/responsive_scaffold.dart';
+import '../services/transaction_service.dart';
 import '../l10n/app_localizations.dart';
 
 class LeadsScreen extends StatefulWidget {
@@ -517,6 +518,32 @@ class _LeadsScreenState extends State<LeadsScreen> {
           ),
         ),
         actions: [
+          if (lead.status != 4 && lead.status != 5) // Not already Converted or Lost
+            FilledButton.icon(
+              icon: const Icon(Icons.check_circle_outline, size: 18),
+              label: const Text('Müşteri Olarak Onayla'),
+              style: FilledButton.styleFrom(backgroundColor: Colors.green[700]),
+              onPressed: () async {
+                try {
+                  // Müşteriye dönüştür (Convert endpoint'i kullanılarak tek adımda yapılır)
+                  await _crmService.convertLead(lead.id);
+                  
+                  if (ctx.mounted) {
+                    Navigator.pop(ctx);
+                    ScaffoldMessenger.of(context).showSnackBar(
+                      const SnackBar(content: Text('Tebrikler! Müşteri adayı başarıyla müşteriye (iş ortağına) dönüştürüldü.'), backgroundColor: Colors.green),
+                    );
+                  }
+                  _loadData();
+                } catch (e) {
+                  if (mounted) {
+                    ScaffoldMessenger.of(context).showSnackBar(
+                      SnackBar(content: Text(e.toString()), backgroundColor: Colors.red),
+                    );
+                  }
+                }
+              },
+            ),
           TextButton(onPressed: () => Navigator.pop(ctx), child: const Text('Kapat')),
         ],
       ),
@@ -593,6 +620,14 @@ class _LeadsScreenState extends State<LeadsScreen> {
                           prefixIcon: Icon(Icons.email, size: 18),
                         ),
                         keyboardType: TextInputType.emailAddress,
+                        validator: (v) {
+                          if (v != null && v.isNotEmpty) {
+                            if (!RegExp(r'^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$').hasMatch(v)) {
+                              return 'Geçerli e-posta giriniz';
+                            }
+                          }
+                          return null;
+                        },
                       ),
                       const SizedBox(height: 10),
                       TextFormField(
@@ -607,6 +642,12 @@ class _LeadsScreenState extends State<LeadsScreen> {
                         inputFormatters: [
                           FilteringTextInputFormatter.allow(RegExp(r'^[+]*[0-9]*')),
                         ],
+                        validator: (v) {
+                          if (v != null && v.isNotEmpty && v.length < 10) {
+                            return 'Geçerli telefon giriniz';
+                          }
+                          return null;
+                        },
                       ),
                       const SizedBox(height: 10),
                       DropdownButtonFormField<int>(
@@ -632,6 +673,14 @@ class _LeadsScreenState extends State<LeadsScreen> {
                           prefixIcon: Icon(Icons.attach_money, size: 18),
                         ),
                         keyboardType: TextInputType.number,
+                        validator: (v) {
+                          if (v != null && v.isNotEmpty) {
+                            if (double.tryParse(v.replaceAll(',', '.')) == null) {
+                              return 'Geçerli bir sayı giriniz';
+                            }
+                          }
+                          return null;
+                        },
                       ),
                       const SizedBox(height: 10),
                       TextFormField(
@@ -665,7 +714,7 @@ class _LeadsScreenState extends State<LeadsScreen> {
                         'email': emailCtrl.text.trim(),
                         'phone': phoneCtrl.text.trim(),
                         'source': selectedSource,
-                        'estimatedValue': double.tryParse(valueCtrl.text) ?? 0,
+                        'estimatedValue': double.tryParse(valueCtrl.text.replaceAll(',', '.')) ?? 0,
                         'notes': notesCtrl.text.trim(),
                       });
                       if (mounted) Navigator.pop(ctx);

@@ -600,7 +600,7 @@ class _UserManagementScreenState extends State<UserManagementScreen>
     } catch (e) {
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text('${l.get('error')}: $e'), backgroundColor: Colors.red),
+          SnackBar(content: Text('${l.get('error')}: ${e.toString().replaceAll('Exception: ', '')}'), backgroundColor: Colors.red),
         );
       }
     }
@@ -643,7 +643,7 @@ class _UserManagementScreenState extends State<UserManagementScreen>
               } catch (e) {
                 if (mounted) {
                   ScaffoldMessenger.of(context).showSnackBar(
-                    SnackBar(content: Text('$e'), backgroundColor: Colors.red),
+                    SnackBar(content: Text(e.toString().replaceAll('Exception: ', '')), backgroundColor: Colors.red),
                   );
                 }
               }
@@ -775,7 +775,7 @@ class _UserManagementScreenState extends State<UserManagementScreen>
                     } catch (e) {
                       if (mounted) {
                         ScaffoldMessenger.of(context).showSnackBar(
-                          SnackBar(content: Text('$e'), backgroundColor: Colors.red),
+                          SnackBar(content: Text(e.toString().replaceAll('Exception: ', '')), backgroundColor: Colors.red),
                         );
                       }
                     }

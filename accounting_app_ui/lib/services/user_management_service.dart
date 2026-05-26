@@ -65,20 +65,25 @@ class UserManagementService {
     required String roleName,
   }) async {
     final response = await http.post(
-      Uri.parse('${ApiConfig.auth}/register'),
+      Uri.parse('${ApiConfig.userManagement}'),
       headers: await _authHeaders(),
       body: jsonEncode({
         'username': username,
         'email': email,
         'password': password,
-        'roleName': roleName,
+        'roleNames': [roleName],
       }),
     );
-    if (response.statusCode == 200) {
+    if (response.statusCode == 200 || response.statusCode == 201) {
       return jsonDecode(response.body);
     }
     final error = jsonDecode(response.body);
-    throw Exception(error['message'] ?? 'Kullanıcı oluşturulamadı');
+    if (error['errors'] != null) {
+      final errorsMap = error['errors'] as Map<String, dynamic>;
+      final messages = errorsMap.values.expand((v) => (v as List)).join('\n');
+      throw Exception(messages);
+    }
+    throw Exception(error['message'] ?? 'İşlem başarısız (Hata Kodu: ${response.statusCode})');
   }
 
   /// Kullanıcı bilgilerini güncelle (username, email)
