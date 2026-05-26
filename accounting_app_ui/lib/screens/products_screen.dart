@@ -394,14 +394,59 @@ class _ProductsScreenState extends State<ProductsScreen> {
                       ),
                       const SizedBox(height: 8),
                       // Dynamic categories from API
-                      DropdownButtonFormField<int>(
-                        value: selectedCategoryId,
-                        decoration: const InputDecoration(labelText: 'Kategori', isDense: true, border: OutlineInputBorder()),
-                        items: _categories.map((cat) =>
-                          DropdownMenuItem(value: cat.id, child: Text(cat.name, style: const TextStyle(fontSize: 13)))
-                        ).toList(),
-                        onChanged: (v) => setDialogState(() => selectedCategoryId = v),
-                        validator: (v) => v == null ? 'Zorunlu' : null,
+                      Row(
+                        children: [
+                          Expanded(
+                            child: DropdownButtonFormField<int>(
+                              value: selectedCategoryId,
+                              decoration: const InputDecoration(labelText: 'Kategori', isDense: true, border: OutlineInputBorder()),
+                              items: _categories.map((cat) =>
+                                DropdownMenuItem(value: cat.id, child: Text(cat.name, style: const TextStyle(fontSize: 13)))
+                              ).toList(),
+                              onChanged: (v) => setDialogState(() => selectedCategoryId = v),
+                              validator: (v) => v == null ? 'Zorunlu' : null,
+                            ),
+                          ),
+                          IconButton(
+                            icon: const Icon(Icons.add_circle, color: Colors.blue),
+                            onPressed: () async {
+                              final nameCtrl = TextEditingController();
+                              final newCat = await showDialog<CategoryLookup>(
+                                context: context,
+                                builder: (ctx2) => AlertDialog(
+                                  title: const Text('Yeni Kategori'),
+                                  content: TextField(
+                                    controller: nameCtrl,
+                                    decoration: const InputDecoration(labelText: 'Kategori Adı', border: OutlineInputBorder()),
+                                  ),
+                                  actions: [
+                                    TextButton(onPressed: () => Navigator.pop(ctx2), child: const Text('İptal')),
+                                    FilledButton(
+                                      onPressed: () async {
+                                        if (nameCtrl.text.trim().isEmpty) return;
+                                        try {
+                                          final created = await _lookupService.createCategory(nameCtrl.text.trim());
+                                          if (ctx2.mounted) Navigator.pop(ctx2, created);
+                                        } catch (e) {
+                                          if (ctx2.mounted) {
+                                            ScaffoldMessenger.of(ctx2).showSnackBar(SnackBar(content: Text(e.toString()), backgroundColor: Colors.red));
+                                          }
+                                        }
+                                      },
+                                      child: const Text('Ekle'),
+                                    )
+                                  ],
+                                ),
+                              );
+                              if (newCat != null) {
+                                setDialogState(() {
+                                  _categories.add(newCat);
+                                  selectedCategoryId = newCat.id;
+                                });
+                              }
+                            },
+                          ),
+                        ],
                       ),
                     ],
                   ),

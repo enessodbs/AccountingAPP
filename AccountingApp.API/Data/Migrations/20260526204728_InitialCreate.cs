@@ -642,25 +642,6 @@ namespace AccountingApp.API.Data.Migrations
                 });
 
             migrationBuilder.InsertData(
-                table: "BusinessContacts",
-                columns: new[] { "Id", "Address", "CreatedAt", "Email", "IsActive", "Name", "Phone", "TaxNumber", "TaxOffice", "Type", "UpdatedAt" },
-                values: new object[,]
-                {
-                    { new Guid("aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaaa"), "Ankara Çankaya", new DateTime(2025, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc), "info@abcyazilim.com", true, "ABC Yazılım Danışmanlık A.Ş.", "3121234567", "1234567890", "Ankara VD", (byte)1, null },
-                    { new Guid("bbbbbbbb-bbbb-bbbb-bbbb-bbbbbbbbbbbb"), "İstanbul Kadıköy", new DateTime(2025, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc), "satis@xyztech.com", true, "XYZ Teknoloji Tedarik Ltd.", "2129876543", "0987654321", "İstanbul VD", (byte)2, null }
-                });
-
-            migrationBuilder.InsertData(
-                table: "Categories",
-                columns: new[] { "Id", "CreatedAt", "IsActive", "Name", "UpdatedAt" },
-                values: new object[,]
-                {
-                    { 1, new DateTime(2025, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc), true, "Yazılım Hizmetleri", null },
-                    { 2, new DateTime(2025, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc), true, "Donanım", null },
-                    { 3, new DateTime(2025, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc), true, "Ofis Malzemeleri", null }
-                });
-
-            migrationBuilder.InsertData(
                 table: "Currencies",
                 columns: new[] { "Id", "Code", "CreatedAt", "IsActive", "Symbol", "UpdatedAt" },
                 values: new object[,]
@@ -668,16 +649,6 @@ namespace AccountingApp.API.Data.Migrations
                     { 1, "TRY", new DateTime(2025, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc), true, "₺", null },
                     { 2, "USD", new DateTime(2025, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc), true, "$", null },
                     { 3, "EUR", new DateTime(2025, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc), true, "€", null }
-                });
-
-            migrationBuilder.InsertData(
-                table: "Departments",
-                columns: new[] { "Id", "CreatedAt", "IsActive", "Name", "UpdatedAt" },
-                values: new object[,]
-                {
-                    { 1, new DateTime(2025, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc), true, "Bilgi İşlem (IT)", null },
-                    { 2, new DateTime(2025, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc), true, "İnsan Kaynakları", null },
-                    { 3, new DateTime(2025, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc), true, "Muhasebe & Finans", null }
                 });
 
             migrationBuilder.InsertData(
@@ -708,73 +679,12 @@ namespace AccountingApp.API.Data.Migrations
             migrationBuilder.InsertData(
                 table: "Users",
                 columns: new[] { "Id", "CreatedAt", "Email", "FullName", "IsActive", "LastLoginAt", "PasswordHash", "RefreshToken", "RefreshTokenExpiryTime", "UpdatedAt", "Username" },
-                values: new object[,]
-                {
-                    { new Guid("33333333-3333-3333-3333-333333333333"), new DateTime(2025, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc), "admin@accountingapp.com", null, true, null, "$2a$11$L.6riel0.Lhw13kLRZjpt.m0K.07Exkl4AEFn3D35DEh/CUMHD1sS", null, null, null, "admin" },
-                    { new Guid("66666666-6666-6666-6666-666666666666"), new DateTime(2025, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc), "ik@accountingapp.com", null, true, null, "$2a$11$fBPZ3XhiulnPpaNDeB4bL.EHTW0vpiQG92zNUkFy2BHvrhZfvRrqm", null, null, null, "ik_user" },
-                    { new Guid("77777777-7777-7777-7777-777777777777"), new DateTime(2025, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc), "muhasebe@accountingapp.com", null, true, null, "$2a$11$ZRGbnZibF88Yqu8agWgSquZw1OWK.z4t1P27y/KIbz0UV8jJj9SL.", null, null, null, "muhasebe_user" },
-                    { new Guid("88888888-8888-8888-8888-888888888888"), new DateTime(2025, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc), "satis@accountingapp.com", null, true, null, "$2a$11$o0uDt/.QG5Va1VpD3Hbabuwu6cdixK.JHAHNPiSpyqv2KYhlegLe2", null, null, null, "satis_user" }
-                });
-
-            migrationBuilder.InsertData(
-                table: "Invoices",
-                columns: new[] { "Id", "BusinessContactId", "CreatedAt", "CreatedById", "CurrencyId", "DueDate", "ExchangeRate", "InvoiceNumber", "IsActive", "IssueDate", "PaymentTerms", "Status", "TaxAmount", "TotalAmount", "Type", "UpdatedAt", "WaybillNumber" },
-                values: new object[,]
-                {
-                    { new Guid("ff000000-0000-0000-0000-000000000001"), new Guid("aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaaa"), new DateTime(2026, 3, 1, 0, 0, 0, 0, DateTimeKind.Utc), new Guid("33333333-3333-3333-3333-333333333333"), 1, new DateTime(2026, 3, 15, 0, 0, 0, 0, DateTimeKind.Utc), 1.0m, "INV-202603-0001", true, new DateTime(2026, 3, 1, 0, 0, 0, 0, DateTimeKind.Utc), "15 gün içinde ödeme", (byte)1, 8100.00m, 53100.00m, (byte)1, null, "" },
-                    { new Guid("ff000000-0000-0000-0000-000000000002"), new Guid("bbbbbbbb-bbbb-bbbb-bbbb-bbbbbbbbbbbb"), new DateTime(2026, 2, 20, 0, 0, 0, 0, DateTimeKind.Utc), new Guid("33333333-3333-3333-3333-333333333333"), 1, new DateTime(2026, 3, 5, 0, 0, 0, 0, DateTimeKind.Utc), 1.0m, "INV-202603-0002", true, new DateTime(2026, 2, 20, 0, 0, 0, 0, DateTimeKind.Utc), "Peşin", (byte)2, 90.00m, 590.00m, (byte)2, null, "İRS-2026-001" }
-                });
-
-            migrationBuilder.InsertData(
-                table: "Positions",
-                columns: new[] { "Id", "CreatedAt", "DepartmentId", "IsActive", "Name", "UpdatedAt" },
-                values: new object[,]
-                {
-                    { 1, new DateTime(2025, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc), 1, true, "Yazılım Geliştirici", null },
-                    { 2, new DateTime(2025, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc), 2, true, "İK Uzmanı", null },
-                    { 3, new DateTime(2025, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc), 3, true, "Finans Müdürü", null }
-                });
-
-            migrationBuilder.InsertData(
-                table: "Products",
-                columns: new[] { "Id", "Barcode", "CategoryId", "Code", "CreatedAt", "CurrencyId", "Description", "IsActive", "Name", "SerialNumber", "StockQuantity", "Type", "UnitPrice", "UpdatedAt" },
-                values: new object[,]
-                {
-                    { 1, "", 1, "SRV-001", new DateTime(2025, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc), 1, "Kurumsal web sitesi geliştirme", true, "Web Geliştirme Hizmeti", "", 0m, (byte)2, 15000.00m, null },
-                    { 2, "", 2, "HW-001", new DateTime(2025, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc), 1, "Kurumsal kullanım dizüstü bilgisayar", true, "Dizüstü Bilgisayar", "SN-2025-HW001", 10m, (byte)1, 45000.00m, null },
-                    { 3, "", 3, "OFC-001", new DateTime(2025, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc), 1, "Aylık kırtasiye malzemeleri", true, "Kırtasiye Paketi", "", 50m, (byte)1, 500.00m, null }
-                });
+                values: new object[] { new Guid("33333333-3333-3333-3333-333333333333"), new DateTime(2025, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc), "admin@accountingapp.com", null, true, null, "$2a$11$JqZ099qsp43VGjwZJu2QG.ewSIoaxoZ014K7u4gGXWd2GBNLsRmy2", null, null, null, "admin" });
 
             migrationBuilder.InsertData(
                 table: "UserRoles",
                 columns: new[] { "RoleId", "UserId" },
-                values: new object[,]
-                {
-                    { new Guid("11111111-1111-1111-1111-111111111111"), new Guid("33333333-3333-3333-3333-333333333333") },
-                    { new Guid("22222222-2222-2222-2222-222222222222"), new Guid("66666666-6666-6666-6666-666666666666") },
-                    { new Guid("33333333-3333-3333-3333-333333333300"), new Guid("77777777-7777-7777-7777-777777777777") },
-                    { new Guid("44444444-4444-4444-4444-444444444400"), new Guid("88888888-8888-8888-8888-888888888888") }
-                });
-
-            migrationBuilder.InsertData(
-                table: "Employees",
-                columns: new[] { "Id", "BaseSalary", "ContactEmail", "CreatedAt", "CurrencyId", "DepartmentId", "FirstName", "HireDate", "IdentityNumber", "IsActive", "LastName", "Phone", "PositionId", "UpdatedAt", "UserId" },
-                values: new object[,]
-                {
-                    { new Guid("44444444-4444-4444-4444-444444444444"), 45000.00m, "ahmet.yilmaz@test.com", new DateTime(2025, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc), 1, 1, "Ahmet", new DateTime(2025, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc), "12345678901", true, "Yılmaz", "5551234567", 1, null, new Guid("33333333-3333-3333-3333-333333333333") },
-                    { new Guid("55555555-5555-5555-5555-555555555555"), 35000.00m, "ayse.kaya@test.com", new DateTime(2025, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc), 1, 2, "Ayşe", new DateTime(2024, 3, 1, 0, 0, 0, 0, DateTimeKind.Utc), "10987654321", true, "Kaya", "5559876543", 2, null, null },
-                    { new Guid("66660000-6666-6666-6666-666666666666"), 32000.00m, "fatma.demir@test.com", new DateTime(2025, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc), 1, 2, "Fatma", new DateTime(2024, 6, 1, 0, 0, 0, 0, DateTimeKind.Utc), "11122233344", true, "Demir", "5553334455", 2, null, new Guid("66666666-6666-6666-6666-666666666666") },
-                    { new Guid("77770000-7777-7777-7777-777777777777"), 38000.00m, "mehmet.ozturk@test.com", new DateTime(2025, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc), 1, 3, "Mehmet", new DateTime(2024, 1, 15, 0, 0, 0, 0, DateTimeKind.Utc), "55566677788", true, "Öztürk", "5556667788", 3, null, new Guid("77777777-7777-7777-7777-777777777777") }
-                });
-
-            migrationBuilder.InsertData(
-                table: "InvoiceLines",
-                columns: new[] { "Id", "CreatedAt", "InvoiceId", "IsActive", "LineTotal", "ProductId", "Quantity", "TaxRate", "UnitPrice", "UpdatedAt" },
-                values: new object[,]
-                {
-                    { new Guid("ff100000-0000-0000-0000-000000000001"), new DateTime(2026, 3, 1, 0, 0, 0, 0, DateTimeKind.Utc), new Guid("ff000000-0000-0000-0000-000000000001"), true, 53100.00m, 1, 3m, 18.00m, 15000.00m, null },
-                    { new Guid("ff100000-0000-0000-0000-000000000002"), new DateTime(2026, 2, 20, 0, 0, 0, 0, DateTimeKind.Utc), new Guid("ff000000-0000-0000-0000-000000000002"), true, 590.00m, 3, 1m, 18.00m, 500.00m, null }
-                });
+                values: new object[] { new Guid("11111111-1111-1111-1111-111111111111"), new Guid("33333333-3333-3333-3333-333333333333") });
 
             migrationBuilder.CreateIndex(
                 name: "IX_Activities_ContactId",

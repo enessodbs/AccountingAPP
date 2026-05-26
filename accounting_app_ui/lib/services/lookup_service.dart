@@ -64,4 +64,16 @@ class LookupService {
     }
     throw Exception('Pozisyon oluşturulamadı: ${response.statusCode}');
   }
+
+  Future<CategoryLookup> createCategory(String name) async {
+    final response = await http.post(
+      Uri.parse(ApiConfig.categories),
+      headers: await _headers(),
+      body: jsonEncode({'name': name}),
+    );
+    if (response.statusCode == 201 || response.statusCode == 200) {
+      return CategoryLookup.fromJson(jsonDecode(response.body));
+    }
+    throw Exception('Kategori oluşturulamadı: ${response.statusCode}');
+  }
 }

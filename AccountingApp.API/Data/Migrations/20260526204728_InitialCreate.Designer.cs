@@ -12,7 +12,7 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace AccountingApp.API.Data.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    [Migration("20260525215132_InitialCreate")]
+    [Migration("20260526204728_InitialCreate")]
     partial class InitialCreate
     {
         /// <inheritdoc />
@@ -126,34 +126,6 @@ namespace AccountingApp.API.Data.Migrations
                     b.HasKey("Id");
 
                     b.ToTable("BusinessContacts");
-
-                    b.HasData(
-                        new
-                        {
-                            Id = new Guid("aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaaa"),
-                            Address = "Ankara Çankaya",
-                            CreatedAt = new DateTime(2025, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
-                            Email = "info@abcyazilim.com",
-                            IsActive = true,
-                            Name = "ABC Yazılım Danışmanlık A.Ş.",
-                            Phone = "3121234567",
-                            TaxNumber = "1234567890",
-                            TaxOffice = "Ankara VD",
-                            Type = (byte)1
-                        },
-                        new
-                        {
-                            Id = new Guid("bbbbbbbb-bbbb-bbbb-bbbb-bbbbbbbbbbbb"),
-                            Address = "İstanbul Kadıköy",
-                            CreatedAt = new DateTime(2025, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
-                            Email = "satis@xyztech.com",
-                            IsActive = true,
-                            Name = "XYZ Teknoloji Tedarik Ltd.",
-                            Phone = "2129876543",
-                            TaxNumber = "0987654321",
-                            TaxOffice = "İstanbul VD",
-                            Type = (byte)2
-                        });
                 });
 
             modelBuilder.Entity("AccountingApp.API.Models.Category", b =>
@@ -180,29 +152,6 @@ namespace AccountingApp.API.Data.Migrations
                     b.HasKey("Id");
 
                     b.ToTable("Categories");
-
-                    b.HasData(
-                        new
-                        {
-                            Id = 1,
-                            CreatedAt = new DateTime(2025, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
-                            IsActive = true,
-                            Name = "Yazılım Hizmetleri"
-                        },
-                        new
-                        {
-                            Id = 2,
-                            CreatedAt = new DateTime(2025, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
-                            IsActive = true,
-                            Name = "Donanım"
-                        },
-                        new
-                        {
-                            Id = 3,
-                            CreatedAt = new DateTime(2025, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
-                            IsActive = true,
-                            Name = "Ofis Malzemeleri"
-                        });
                 });
 
             modelBuilder.Entity("AccountingApp.API.Models.CrmTask", b =>
@@ -349,29 +298,6 @@ namespace AccountingApp.API.Data.Migrations
                     b.HasKey("Id");
 
                     b.ToTable("Departments");
-
-                    b.HasData(
-                        new
-                        {
-                            Id = 1,
-                            CreatedAt = new DateTime(2025, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
-                            IsActive = true,
-                            Name = "Bilgi İşlem (IT)"
-                        },
-                        new
-                        {
-                            Id = 2,
-                            CreatedAt = new DateTime(2025, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
-                            IsActive = true,
-                            Name = "İnsan Kaynakları"
-                        },
-                        new
-                        {
-                            Id = 3,
-                            CreatedAt = new DateTime(2025, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
-                            IsActive = true,
-                            Name = "Muhasebe & Finans"
-                        });
                 });
 
             modelBuilder.Entity("AccountingApp.API.Models.Employee", b =>
@@ -441,75 +367,6 @@ namespace AccountingApp.API.Data.Migrations
                     b.HasIndex("UserId");
 
                     b.ToTable("Employees");
-
-                    b.HasData(
-                        new
-                        {
-                            Id = new Guid("44444444-4444-4444-4444-444444444444"),
-                            BaseSalary = 45000.00m,
-                            ContactEmail = "ahmet.yilmaz@test.com",
-                            CreatedAt = new DateTime(2025, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
-                            CurrencyId = 1,
-                            DepartmentId = 1,
-                            FirstName = "Ahmet",
-                            HireDate = new DateTime(2025, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
-                            IdentityNumber = "12345678901",
-                            IsActive = true,
-                            LastName = "Yılmaz",
-                            Phone = "5551234567",
-                            PositionId = 1,
-                            UserId = new Guid("33333333-3333-3333-3333-333333333333")
-                        },
-                        new
-                        {
-                            Id = new Guid("55555555-5555-5555-5555-555555555555"),
-                            BaseSalary = 35000.00m,
-                            ContactEmail = "ayse.kaya@test.com",
-                            CreatedAt = new DateTime(2025, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
-                            CurrencyId = 1,
-                            DepartmentId = 2,
-                            FirstName = "Ayşe",
-                            HireDate = new DateTime(2024, 3, 1, 0, 0, 0, 0, DateTimeKind.Utc),
-                            IdentityNumber = "10987654321",
-                            IsActive = true,
-                            LastName = "Kaya",
-                            Phone = "5559876543",
-                            PositionId = 2
-                        },
-                        new
-                        {
-                            Id = new Guid("66660000-6666-6666-6666-666666666666"),
-                            BaseSalary = 32000.00m,
-                            ContactEmail = "fatma.demir@test.com",
-                            CreatedAt = new DateTime(2025, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
-                            CurrencyId = 1,
-                            DepartmentId = 2,
-                            FirstName = "Fatma",
-                            HireDate = new DateTime(2024, 6, 1, 0, 0, 0, 0, DateTimeKind.Utc),
-                            IdentityNumber = "11122233344",
-                            IsActive = true,
-                            LastName = "Demir",
-                            Phone = "5553334455",
-                            PositionId = 2,
-                            UserId = new Guid("66666666-6666-6666-6666-666666666666")
-                        },
-                        new
-                        {
-                            Id = new Guid("77770000-7777-7777-7777-777777777777"),
-                            BaseSalary = 38000.00m,
-                            ContactEmail = "mehmet.ozturk@test.com",
-                            CreatedAt = new DateTime(2025, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
-                            CurrencyId = 1,
-                            DepartmentId = 3,
-                            FirstName = "Mehmet",
-                            HireDate = new DateTime(2024, 1, 15, 0, 0, 0, 0, DateTimeKind.Utc),
-                            IdentityNumber = "55566677788",
-                            IsActive = true,
-                            LastName = "Öztürk",
-                            Phone = "5556667788",
-                            PositionId = 3,
-                            UserId = new Guid("77777777-7777-7777-7777-777777777777")
-                        });
                 });
 
             modelBuilder.Entity("AccountingApp.API.Models.Invoice", b =>
@@ -581,46 +438,6 @@ namespace AccountingApp.API.Data.Migrations
                         .IsUnique();
 
                     b.ToTable("Invoices");
-
-                    b.HasData(
-                        new
-                        {
-                            Id = new Guid("ff000000-0000-0000-0000-000000000001"),
-                            BusinessContactId = new Guid("aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaaa"),
-                            CreatedAt = new DateTime(2026, 3, 1, 0, 0, 0, 0, DateTimeKind.Utc),
-                            CreatedById = new Guid("33333333-3333-3333-3333-333333333333"),
-                            CurrencyId = 1,
-                            DueDate = new DateTime(2026, 3, 15, 0, 0, 0, 0, DateTimeKind.Utc),
-                            ExchangeRate = 1.0m,
-                            InvoiceNumber = "INV-202603-0001",
-                            IsActive = true,
-                            IssueDate = new DateTime(2026, 3, 1, 0, 0, 0, 0, DateTimeKind.Utc),
-                            PaymentTerms = "15 gün içinde ödeme",
-                            Status = (byte)1,
-                            TaxAmount = 8100.00m,
-                            TotalAmount = 53100.00m,
-                            Type = (byte)1,
-                            WaybillNumber = ""
-                        },
-                        new
-                        {
-                            Id = new Guid("ff000000-0000-0000-0000-000000000002"),
-                            BusinessContactId = new Guid("bbbbbbbb-bbbb-bbbb-bbbb-bbbbbbbbbbbb"),
-                            CreatedAt = new DateTime(2026, 2, 20, 0, 0, 0, 0, DateTimeKind.Utc),
-                            CreatedById = new Guid("33333333-3333-3333-3333-333333333333"),
-                            CurrencyId = 1,
-                            DueDate = new DateTime(2026, 3, 5, 0, 0, 0, 0, DateTimeKind.Utc),
-                            ExchangeRate = 1.0m,
-                            InvoiceNumber = "INV-202603-0002",
-                            IsActive = true,
-                            IssueDate = new DateTime(2026, 2, 20, 0, 0, 0, 0, DateTimeKind.Utc),
-                            PaymentTerms = "Peşin",
-                            Status = (byte)2,
-                            TaxAmount = 90.00m,
-                            TotalAmount = 590.00m,
-                            Type = (byte)2,
-                            WaybillNumber = "İRS-2026-001"
-                        });
                 });
 
             modelBuilder.Entity("AccountingApp.API.Models.InvoiceLine", b =>
@@ -663,32 +480,6 @@ namespace AccountingApp.API.Data.Migrations
                     b.HasIndex("ProductId");
 
                     b.ToTable("InvoiceLines");
-
-                    b.HasData(
-                        new
-                        {
-                            Id = new Guid("ff100000-0000-0000-0000-000000000001"),
-                            CreatedAt = new DateTime(2026, 3, 1, 0, 0, 0, 0, DateTimeKind.Utc),
-                            InvoiceId = new Guid("ff000000-0000-0000-0000-000000000001"),
-                            IsActive = true,
-                            LineTotal = 53100.00m,
-                            ProductId = 1,
-                            Quantity = 3m,
-                            TaxRate = 18.00m,
-                            UnitPrice = 15000.00m
-                        },
-                        new
-                        {
-                            Id = new Guid("ff100000-0000-0000-0000-000000000002"),
-                            CreatedAt = new DateTime(2026, 2, 20, 0, 0, 0, 0, DateTimeKind.Utc),
-                            InvoiceId = new Guid("ff000000-0000-0000-0000-000000000002"),
-                            IsActive = true,
-                            LineTotal = 590.00m,
-                            ProductId = 3,
-                            Quantity = 1m,
-                            TaxRate = 18.00m,
-                            UnitPrice = 500.00m
-                        });
                 });
 
             modelBuilder.Entity("AccountingApp.API.Models.Lead", b =>
@@ -959,32 +750,6 @@ namespace AccountingApp.API.Data.Migrations
                     b.HasIndex("DepartmentId");
 
                     b.ToTable("Positions");
-
-                    b.HasData(
-                        new
-                        {
-                            Id = 1,
-                            CreatedAt = new DateTime(2025, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
-                            DepartmentId = 1,
-                            IsActive = true,
-                            Name = "Yazılım Geliştirici"
-                        },
-                        new
-                        {
-                            Id = 2,
-                            CreatedAt = new DateTime(2025, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
-                            DepartmentId = 2,
-                            IsActive = true,
-                            Name = "İK Uzmanı"
-                        },
-                        new
-                        {
-                            Id = 3,
-                            CreatedAt = new DateTime(2025, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
-                            DepartmentId = 3,
-                            IsActive = true,
-                            Name = "Finans Müdürü"
-                        });
                 });
 
             modelBuilder.Entity("AccountingApp.API.Models.Product", b =>
@@ -1049,56 +814,6 @@ namespace AccountingApp.API.Data.Migrations
                     b.HasIndex("CurrencyId");
 
                     b.ToTable("Products");
-
-                    b.HasData(
-                        new
-                        {
-                            Id = 1,
-                            Barcode = "",
-                            CategoryId = 1,
-                            Code = "SRV-001",
-                            CreatedAt = new DateTime(2025, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
-                            CurrencyId = 1,
-                            Description = "Kurumsal web sitesi geliştirme",
-                            IsActive = true,
-                            Name = "Web Geliştirme Hizmeti",
-                            SerialNumber = "",
-                            StockQuantity = 0m,
-                            Type = (byte)2,
-                            UnitPrice = 15000.00m
-                        },
-                        new
-                        {
-                            Id = 2,
-                            Barcode = "",
-                            CategoryId = 2,
-                            Code = "HW-001",
-                            CreatedAt = new DateTime(2025, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
-                            CurrencyId = 1,
-                            Description = "Kurumsal kullanım dizüstü bilgisayar",
-                            IsActive = true,
-                            Name = "Dizüstü Bilgisayar",
-                            SerialNumber = "SN-2025-HW001",
-                            StockQuantity = 10m,
-                            Type = (byte)1,
-                            UnitPrice = 45000.00m
-                        },
-                        new
-                        {
-                            Id = 3,
-                            Barcode = "",
-                            CategoryId = 3,
-                            Code = "OFC-001",
-                            CreatedAt = new DateTime(2025, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
-                            CurrencyId = 1,
-                            Description = "Aylık kırtasiye malzemeleri",
-                            IsActive = true,
-                            Name = "Kırtasiye Paketi",
-                            SerialNumber = "",
-                            StockQuantity = 50m,
-                            Type = (byte)1,
-                            UnitPrice = 500.00m
-                        });
                 });
 
             modelBuilder.Entity("AccountingApp.API.Models.Role", b =>
@@ -1359,35 +1074,8 @@ namespace AccountingApp.API.Data.Migrations
                             CreatedAt = new DateTime(2025, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
                             Email = "admin@accountingapp.com",
                             IsActive = true,
-                            PasswordHash = "$2a$11$L.6riel0.Lhw13kLRZjpt.m0K.07Exkl4AEFn3D35DEh/CUMHD1sS",
+                            PasswordHash = "$2a$11$JqZ099qsp43VGjwZJu2QG.ewSIoaxoZ014K7u4gGXWd2GBNLsRmy2",
                             Username = "admin"
-                        },
-                        new
-                        {
-                            Id = new Guid("66666666-6666-6666-6666-666666666666"),
-                            CreatedAt = new DateTime(2025, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
-                            Email = "ik@accountingapp.com",
-                            IsActive = true,
-                            PasswordHash = "$2a$11$fBPZ3XhiulnPpaNDeB4bL.EHTW0vpiQG92zNUkFy2BHvrhZfvRrqm",
-                            Username = "ik_user"
-                        },
-                        new
-                        {
-                            Id = new Guid("77777777-7777-7777-7777-777777777777"),
-                            CreatedAt = new DateTime(2025, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
-                            Email = "muhasebe@accountingapp.com",
-                            IsActive = true,
-                            PasswordHash = "$2a$11$ZRGbnZibF88Yqu8agWgSquZw1OWK.z4t1P27y/KIbz0UV8jJj9SL.",
-                            Username = "muhasebe_user"
-                        },
-                        new
-                        {
-                            Id = new Guid("88888888-8888-8888-8888-888888888888"),
-                            CreatedAt = new DateTime(2025, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
-                            Email = "satis@accountingapp.com",
-                            IsActive = true,
-                            PasswordHash = "$2a$11$o0uDt/.QG5Va1VpD3Hbabuwu6cdixK.JHAHNPiSpyqv2KYhlegLe2",
-                            Username = "satis_user"
                         });
                 });
 
@@ -1410,21 +1098,6 @@ namespace AccountingApp.API.Data.Migrations
                         {
                             UserId = new Guid("33333333-3333-3333-3333-333333333333"),
                             RoleId = new Guid("11111111-1111-1111-1111-111111111111")
-                        },
-                        new
-                        {
-                            UserId = new Guid("66666666-6666-6666-6666-666666666666"),
-                            RoleId = new Guid("22222222-2222-2222-2222-222222222222")
-                        },
-                        new
-                        {
-                            UserId = new Guid("77777777-7777-7777-7777-777777777777"),
-                            RoleId = new Guid("33333333-3333-3333-3333-333333333300")
-                        },
-                        new
-                        {
-                            UserId = new Guid("88888888-8888-8888-8888-888888888888"),
-                            RoleId = new Guid("44444444-4444-4444-4444-444444444400")
                         });
                 });
 
