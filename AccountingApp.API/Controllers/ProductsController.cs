@@ -10,7 +10,7 @@ namespace AccountingApp.API.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
-    [Authorize(Roles = "Admin,Muhasebe")]
+    [Authorize]
     public class ProductsController : ControllerBase
     {
         private readonly AppDbContext _context;
@@ -53,7 +53,7 @@ namespace AccountingApp.API.Controllers
         }
 
         [HttpPost]
-        [Authorize]
+        [Authorize(Roles = "Admin,Muhasebe,Satış")]
         public async Task<ActionResult<ProductDto>> PostProduct(ProductCreateDto dto)
         {
             var product = _mapper.Map<Product>(dto);
@@ -71,7 +71,7 @@ namespace AccountingApp.API.Controllers
         }
 
         [HttpPut("{id}")]
-        [Authorize]
+        [Authorize(Roles = "Admin,Muhasebe,Satış")]
         public async Task<IActionResult> PutProduct(int id, ProductUpdateDto dto)
         {
             var product = await _context.Products.FindAsync(id);
@@ -94,7 +94,7 @@ namespace AccountingApp.API.Controllers
         }
 
         [HttpDelete("{id}")]
-        [Authorize]
+        [Authorize(Roles = "Admin,Muhasebe,Satış")]
         public async Task<IActionResult> DeleteProduct(int id)
         {
             var product = await _context.Products.FindAsync(id);

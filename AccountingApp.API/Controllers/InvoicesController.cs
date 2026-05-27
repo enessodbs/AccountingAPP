@@ -11,7 +11,7 @@ namespace AccountingApp.API.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
-    [Authorize(Roles = "Admin,Muhasebe")]
+    [Authorize]
     public class InvoicesController : ControllerBase
     {
         private readonly AppDbContext _context;
@@ -89,6 +89,7 @@ namespace AccountingApp.API.Controllers
 
         // POST: api/Invoices
         [HttpPost]
+        [Authorize(Roles = "Admin,Muhasebe")]
         public async Task<ActionResult<InvoiceDetailDto>> PostInvoice(InvoiceCreateDto invoiceDto)
         {
             var invoice = _mapper.Map<Invoice>(invoiceDto);
@@ -149,6 +150,7 @@ namespace AccountingApp.API.Controllers
 
         // PUT: api/Invoices/5/status
         [HttpPut("{id}/status")]
+        [Authorize(Roles = "Admin,Muhasebe")]
         public async Task<IActionResult> UpdateInvoiceStatus(Guid id, [FromBody] byte status)
         {
             var invoice = await _context.Invoices.FindAsync(id);
@@ -166,6 +168,7 @@ namespace AccountingApp.API.Controllers
 
         // DELETE: api/Invoices/5
         [HttpDelete("{id}")]
+        [Authorize(Roles = "Admin,Muhasebe")]
         public async Task<IActionResult> DeleteInvoice(Guid id)
         {
             var invoice = await _context.Invoices.FindAsync(id);

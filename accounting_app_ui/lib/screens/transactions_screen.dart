@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import '../widgets/custom_toast.dart';
 import '../models/transaction.dart';
 import '../services/transaction_service.dart';
 import '../widgets/responsive_scaffold.dart';
@@ -68,9 +69,7 @@ class _TransactionsScreenState extends State<TransactionsScreen> with SingleTick
 
   void _showError(String msg) {
     if (!mounted) return;
-    ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(content: Text(msg.replaceAll('Exception: ', '')), backgroundColor: Colors.red[700]),
-    );
+    CustomToast.showError(context, msg.replaceAll('Exception: ', ''));
   }
 
   @override
@@ -356,9 +355,7 @@ class _TransactionsScreenState extends State<TransactionsScreen> with SingleTick
         await _transactionService.deleteTransaction(tx.id);
         _loadAll();
         if (mounted) {
-          ScaffoldMessenger.of(context).showSnackBar(
-            const SnackBar(content: Text('İşlem silindi'), backgroundColor: Colors.green),
-          );
+          CustomToast.showSuccess(context, 'İşlem silindi');
         }
         return true;
       } catch (e) {
@@ -526,12 +523,7 @@ class _TransactionsScreenState extends State<TransactionsScreen> with SingleTick
                       if (mounted) Navigator.pop(ctx);
                       _loadAll();
                       if (mounted) {
-                        ScaffoldMessenger.of(context).showSnackBar(
-                          SnackBar(
-                            content: Text(selectedType == 1 ? 'Tahsilat oluşturuldu' : 'Ödeme oluşturuldu'),
-                            backgroundColor: Colors.green,
-                          ),
-                        );
+                        CustomToast.showSuccess(context, selectedType == 1 ? 'Tahsilat oluşturuldu' : 'Ödeme oluşturuldu');
                       }
                     } catch (e) {
                       _showError(e.toString());

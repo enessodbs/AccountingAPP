@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import '../widgets/custom_toast.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 class ContactScreen extends StatelessWidget {
@@ -83,9 +84,7 @@ class ContactScreen extends StatelessWidget {
                     await launchUrl(emailLaunchUri);
                   } else {
                     if (context.mounted) {
-                      ScaffoldMessenger.of(context).showSnackBar(
-                        const SnackBar(content: Text('E-posta istemcisi açılamadı. Lütfen destek@muhasebesistemi.com adresine yazın.')),
-                      );
+                      CustomToast.showError(context, 'E-posta istemcisi açılamadı. Lütfen destek@muhasebesistemi.com adresine yazın.');
                     }
                   }
                 },

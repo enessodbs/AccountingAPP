@@ -1,5 +1,6 @@
 import 'dart:convert';
 import 'package:flutter/material.dart';
+import '../widgets/custom_toast.dart';
 import 'package:http/http.dart' as http;
 import '../config/api_config.dart';
 import '../models/invoice.dart';
@@ -69,9 +70,7 @@ class _InvoicesScreenState extends State<InvoicesScreen> with SingleTickerProvid
 
   void _showError(String msg) {
     if (!mounted) return;
-    ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(content: Text(msg.replaceAll('Exception: ', '')), backgroundColor: Colors.red[700]),
-    );
+    CustomToast.showError(context, msg.replaceAll('Exception: ', ''));
   }
 
   @override
@@ -449,12 +448,7 @@ class _InvoicesScreenState extends State<InvoicesScreen> with SingleTickerProvid
                                         _loadGelen();
                                         _loadGiden();
                                         if (mounted) {
-                                          ScaffoldMessenger.of(this.context).showSnackBar(
-                                            SnackBar(
-                                              content: Text('Durum "${opt['label']}" olarak güncellendi'),
-                                              backgroundColor: Colors.green,
-                                            ),
-                                          );
+                                          CustomToast.showSuccess(this.context, 'Durum "${opt['label']}" olarak güncellendi');
                                         }
                                       } catch (e) {
                                         _showError(e.toString());
@@ -555,9 +549,7 @@ class _InvoicesScreenState extends State<InvoicesScreen> with SingleTickerProvid
         _loadGelen();
         _loadGiden();
         if (mounted) {
-          ScaffoldMessenger.of(context).showSnackBar(
-            const SnackBar(content: Text('Fatura silindi'), backgroundColor: Colors.green),
-          );
+          CustomToast.showSuccess(context, 'Fatura silindi');
         }
         return true;
       } catch (e) {
@@ -756,7 +748,7 @@ class _InvoicesScreenState extends State<InvoicesScreen> with SingleTickerProvid
                     });
                     if (mounted) Navigator.pop(ctx);
                     _loadGelen(); _loadGiden();
-                    if (mounted) ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text('Fatura oluşturuldu'), backgroundColor: Colors.green));
+                    if (mounted) CustomToast.showSuccess(context, 'Fatura oluşturuldu');
                   } catch (e) { _showError(e.toString()); }
                 },
                 child: const Text('Oluştur'),

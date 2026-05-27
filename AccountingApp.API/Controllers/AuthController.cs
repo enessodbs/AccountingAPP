@@ -69,7 +69,13 @@ namespace AccountingApp.API.Controllers
                 .Select(ur => ur.Role.Name)
                 .ToList();
 
-            return GenerateTokenResponse(user.Username, user.Email, user.FullName, roles, user.Id);
+            var permissions = user.UserRoles
+                .Where(ur => ur.Role.IsActive && !string.IsNullOrEmpty(ur.Role.Permissions))
+                .SelectMany(ur => ur.Role.Permissions.Split(',', StringSplitOptions.RemoveEmptyEntries))
+                .Distinct()
+                .ToList();
+
+            return GenerateTokenResponse(user.Username, user.Email, user.FullName, roles, permissions, user.Id);
         }
 
         /// <summary>
@@ -108,7 +114,7 @@ namespace AccountingApp.API.Controllers
         /// JWT token üretimi — Claim'lere kullanıcı bilgileri ve roller eklenir.
         /// Token süresi appsettings.json'daki ExpirationInMinutes ayarından alınır.
         /// </summary>
-        private IActionResult GenerateTokenResponse(string username, string email, string? fullName, List<string> roles, Guid userId)
+        private IActionResult GenerateTokenResponse(string username, string email, string? fullName, List<string> roles, List<string> permissions, Guid userId)
         {
             var tokenHandler = new JwtSecurityTokenHandler();
             var keyStr = _configuration["JwtSettings:Secret"];
@@ -134,6 +140,12 @@ namespace AccountingApp.API.Controllers
                 claims.Add(new Claim(ClaimTypes.Role, role));
             }
 
+            // Her izin için ayrı claim
+            foreach (var perm in permissions)
+            {
+                claims.Add(new Claim("Permission", perm));
+            }
+
             double expiryMinutes = _configuration.GetValue<double>("JwtSettings:ExpirationInMinutes", 120);
             var tokenDescriptor = new SecurityTokenDescriptor
             {
@@ -154,7 +166,8 @@ namespace AccountingApp.API.Controllers
                 Expiration = tokenDescriptor.Expires!.Value,
                 Username = username,
                 FullName = fullName,
-                Roles = roles
+                Roles = roles,
+                Permissions = permissions
             };
 
             return Ok(response);

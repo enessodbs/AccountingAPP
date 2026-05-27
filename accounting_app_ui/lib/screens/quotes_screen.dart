@@ -1,5 +1,6 @@
 import 'dart:convert';
 import 'package:flutter/material.dart';
+import '../widgets/custom_toast.dart';
 import 'package:http/http.dart' as http;
 import '../config/api_config.dart';
 import '../models/invoice.dart';
@@ -41,7 +42,7 @@ class _QuotesScreenState extends State<QuotesScreen> {
 
   void _showError(String msg) {
     if (!mounted) return;
-    ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(msg), backgroundColor: Colors.red[700]));
+    CustomToast.showError(context, msg);
   }
 
   Future<void> _approveQuote(Invoice quote) async {
@@ -61,9 +62,7 @@ class _QuotesScreenState extends State<QuotesScreen> {
 
       if (res.statusCode == 200 || res.statusCode == 204) {
         if (!mounted) return;
-        ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(content: Text('Teklif onaylandı ve faturaya dönüştürüldü!'), backgroundColor: Colors.green),
-        );
+        CustomToast.showSuccess(context, 'Teklif onaylandı ve faturaya dönüştürüldü!');
         _loadQuotes();
       } else {
         _showError('Durum güncellenemedi: ${res.statusCode}');
@@ -375,7 +374,7 @@ class _QuotesScreenState extends State<QuotesScreen> {
 
                     if (mounted) Navigator.pop(ctx);
                     _loadQuotes();
-                    if (mounted) ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text('Teklif oluşturuldu'), backgroundColor: Colors.green));
+                    if (mounted) CustomToast.showSuccess(context, 'Teklif oluşturuldu');
                   } catch (e) { _showError(e.toString()); }
                 },
                 child: const Text('Oluştur'),

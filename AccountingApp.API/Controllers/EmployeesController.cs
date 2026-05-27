@@ -10,7 +10,7 @@ namespace AccountingApp.API.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
-    [Authorize(Roles = "Admin,İK")]
+    [Authorize]
     public class EmployeesController : ControllerBase
     {
         private readonly AppDbContext _context;
@@ -26,6 +26,7 @@ namespace AccountingApp.API.Controllers
         public async Task<ActionResult<IEnumerable<EmployeeDto>>> GetEmployees()
         {
             var employees = await _context.Employees
+                .Where(e => e.IsActive)
                 .Include(e => e.Department)
                 .Include(e => e.Position)
                 .Include(e => e.Currency)
@@ -51,6 +52,7 @@ namespace AccountingApp.API.Controllers
         }
 
         [HttpPost]
+        [Authorize(Roles = "Admin,İK")]
         public async Task<ActionResult<EmployeeDto>> PostEmployee(EmployeeCreateDto employeeCreateDto)
         {
             var employee = _mapper.Map<Employee>(employeeCreateDto);
@@ -70,6 +72,7 @@ namespace AccountingApp.API.Controllers
         }
 
         [HttpPut("{id}")]
+        [Authorize(Roles = "Admin,İK")]
         public async Task<IActionResult> PutEmployee(Guid id, EmployeeUpdateDto employeeUpdateDto)
         {
             var employee = await _context.Employees.FindAsync(id);
@@ -95,6 +98,7 @@ namespace AccountingApp.API.Controllers
         }
 
         [HttpDelete("{id}")]
+        [Authorize(Roles = "Admin,İK")]
         public async Task<IActionResult> DeleteEmployee(Guid id)
         {
             var employee = await _context.Employees.FindAsync(id);

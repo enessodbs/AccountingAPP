@@ -17,7 +17,9 @@ class ApiConfig {
   static const String departments = '$baseUrl/departments';
   static const String positions = '$baseUrl/positions';
   static const String categories = '$baseUrl/categories';
-  static const String currencies = '$baseUrl/currencies';
+  static const String lookup = '$baseUrl/Lookup';
+  static const String currencies = '$baseUrl/Currencies';
+  static const String roles = '$baseUrl/Roles';
   static const String businessContacts = '$baseUrl/businesscontacts';
   static const String stockMovements = '$baseUrl/stockmovements';
   static const String reports = '$baseUrl/reports';

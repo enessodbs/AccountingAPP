@@ -1,3 +1,4 @@
+import '../widgets/custom_toast.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import '../models/employee.dart';
@@ -52,9 +53,7 @@ class _EmployeeListScreenState extends State<EmployeeListScreen> {
     } catch (e) {
       setState(() => _isLoading = false);
       if (mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text(e.toString().replaceAll('Exception: ', '')), backgroundColor: Colors.red[700]),
-        );
+        CustomToast.showError(context, e.toString().replaceAll('Exception: ', ''));
       }
     }
   }
@@ -173,7 +172,21 @@ class _EmployeeListScreenState extends State<EmployeeListScreen> {
                     style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 14, color: Colors.green),
                   ),
                   const SizedBox(height: 4),
-                  Icon(Icons.copy, size: 14, color: Colors.grey[400]),
+                  Row(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      Icon(Icons.copy, size: 14, color: Colors.grey[400]),
+                      const SizedBox(width: 8),
+                      IconButton(
+                        padding: EdgeInsets.zero,
+                        constraints: const BoxConstraints(),
+                        icon: Icon(Icons.close, size: 18, color: Colors.red[400]),
+                        onPressed: () {
+                          _confirmDelete(employee);
+                        },
+                      ),
+                    ],
+                  ),
                 ],
               ),
             ],
@@ -186,20 +199,38 @@ class _EmployeeListScreenState extends State<EmployeeListScreen> {
   void _copyContactToClipboard(Employee employee) {
     final contactInfo = '${employee.firstName} ${employee.lastName}\nE-posta: ${employee.contactEmail}\nTelefon: ${employee.phone}';
     Clipboard.setData(ClipboardData(text: contactInfo));
-    ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(
-        content: Row(
-          children: [
-            const Icon(Icons.check_circle, color: Colors.white, size: 18),
-            const SizedBox(width: 8),
-            Text('${employee.firstName} ${employee.lastName} iletişim bilgisi kopyalandı!'),
-          ],
-        ),
-        backgroundColor: Colors.green[700],
-        behavior: SnackBarBehavior.floating,
-        duration: const Duration(seconds: 2),
+    CustomToast.showSuccess(context, '${employee.firstName} ${employee.lastName} iletişim bilgisi kopyalandı!');
+  }
+
+  Future<void> _confirmDelete(Employee employee) async {
+    final result = await showDialog<bool>(
+      context: context,
+      builder: (ctx) => AlertDialog(
+        title: const Text('Personel Sil', style: TextStyle(fontSize: 16)),
+        content: Text('${employee.firstName} ${employee.lastName} adlı personeli silmek istediğinize emin misiniz?'),
+        actions: [
+          TextButton(onPressed: () => Navigator.pop(ctx, false), child: const Text('İptal')),
+          TextButton(
+            onPressed: () => Navigator.pop(ctx, true),
+            child: const Text('Sil', style: TextStyle(color: Colors.red)),
+          ),
+        ],
       ),
     );
+
+    if (result == true) {
+      try {
+        await _employeeService.deleteEmployee(employee.id);
+        _loadData();
+        if (mounted) {
+          CustomToast.showSuccess(context, 'Personel başarıyla silindi');
+        }
+      } catch (e) {
+        if (mounted) {
+          CustomToast.showError(context, e.toString());
+        }
+      }
+    }
   }
 
   /// Personel ekleme dialog'u — Departman seçince pozisyonlar dinamik yüklenir
@@ -361,7 +392,7 @@ class _EmployeeListScreenState extends State<EmployeeListScreen> {
                                           setState(() => _departments.add(newDept));
                                           onDepartmentChanged(newDept.id);
                                         } catch (e) {
-                                          ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(e.toString())));
+                                          CustomToast.showError(context, e.toString());
                                         }
                                       },
                                       child: const Text('Ekle'),
@@ -426,7 +457,7 @@ class _EmployeeListScreenState extends State<EmployeeListScreen> {
                                               selectedPosId = newPos.id;
                                             });
                                           } catch (e) {
-                                            ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(e.toString())));
+                                            CustomToast.showError(context, e.toString());
                                           }
                                         },
                                         child: const Text('Ekle'),
@@ -463,13 +494,11 @@ class _EmployeeListScreenState extends State<EmployeeListScreen> {
                       if (mounted) Navigator.pop(ctx);
                       _loadData();
                       if (mounted) {
-                        ScaffoldMessenger.of(context).showSnackBar(
-                          const SnackBar(content: Text('Personel oluşturuldu'), backgroundColor: Colors.green),
-                        );
+                        CustomToast.showSuccess(context, 'Personel oluşturuldu');
                       }
                     } catch (e) {
                       if (mounted) {
-                        ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(e.toString()), backgroundColor: Colors.red));
+                        CustomToast.showError(context, e.toString());
                       }
                     }
                   },

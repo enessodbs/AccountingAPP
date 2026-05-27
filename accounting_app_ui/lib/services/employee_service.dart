@@ -49,4 +49,19 @@ class EmployeeService {
       throw Exception('Hata: $e');
     }
   }
+
+  Future<void> deleteEmployee(String id) async {
+    final token = await AuthService().getToken();
+    final response = await http.delete(
+      Uri.parse('${ApiConfig.employees}/$id'),
+      headers: {
+        'Content-Type': 'application/json',
+        if (token != null) 'Authorization': 'Bearer $token',
+      },
+    );
+
+    if (response.statusCode != 204) {
+      throw Exception('Personel silinirken bir hata oluştu');
+    }
+  }
 }

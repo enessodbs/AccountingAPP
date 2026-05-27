@@ -11,7 +11,7 @@ import '../screens/business_contacts_screen.dart';
 import '../screens/reports_screen.dart';
 import '../screens/currencies_screen.dart';
 import '../screens/quotes_screen.dart';
-
+import '../screens/barcode_stock_entry_screen.dart';
 class AppDrawer extends StatefulWidget {
   final String currentRoute;
 
@@ -23,6 +23,7 @@ class AppDrawer extends StatefulWidget {
 
 class _AppDrawerState extends State<AppDrawer> {
   List<String> _userRoles = [];
+  List<String> _userPermissions = [];
   bool _isLoadingRoles = true;
 
   @override
@@ -32,17 +33,19 @@ class _AppDrawerState extends State<AppDrawer> {
   }
 
   Future<void> _loadRoles() async {
+    final perms = await AuthService().getPermissions();
     final roles = await AuthService().getRoles();
     if (mounted) {
       setState(() {
         _userRoles = roles;
+        _userPermissions = perms;
         _isLoadingRoles = false;
       });
     }
   }
 
-  bool _hasRole(String role) {
-    return _userRoles.contains('Admin') || _userRoles.contains(role);
+  bool _hasPermission(String perm) {
+    return _userRoles.contains('Admin') || _userPermissions.contains(perm);
   }
 
   @override
@@ -106,8 +109,7 @@ class _AppDrawerState extends State<AppDrawer> {
                   destination: const DashboardScreen(),
                 ),
 
-                // HR & Admin
-                if (_hasRole('İK'))
+                if (_hasPermission('Personeller'))
                   _buildNavItem(
                     context,
                     icon: Icons.people_rounded,
@@ -116,8 +118,7 @@ class _AppDrawerState extends State<AppDrawer> {
                     destination: const EmployeeListScreen(),
                   ),
 
-                // Accounting & Admin
-                if (_hasRole('Muhasebe')) ...[
+                if (_hasPermission('Faturalar'))
                   _buildNavItem(
                     context,
                     icon: Icons.receipt_long_rounded,
@@ -125,6 +126,7 @@ class _AppDrawerState extends State<AppDrawer> {
                     route: 'invoices',
                     destination: const InvoicesScreen(),
                   ),
+                if (_hasPermission('Urunler'))
                   _buildNavItem(
                     context,
                     icon: Icons.inventory_2_rounded,
@@ -132,6 +134,15 @@ class _AppDrawerState extends State<AppDrawer> {
                     route: 'products',
                     destination: const ProductsScreen(),
                   ),
+                if (_hasPermission('Urunler'))
+                  _buildNavItem(
+                    context,
+                    icon: Icons.qr_code_scanner_rounded,
+                    title: 'Barkod ile Stok',
+                    route: 'barcodeStock',
+                    destination: const BarcodeStockEntryScreen(),
+                  ),
+                if (_hasPermission('Faturalar') || _hasPermission('Urunler'))
                   _buildNavItem(
                     context,
                     icon: Icons.swap_horiz_rounded,
@@ -139,6 +150,7 @@ class _AppDrawerState extends State<AppDrawer> {
                     route: 'transactions',
                     destination: const TransactionsScreen(),
                   ),
+                if (_hasPermission('IsOrtaklari'))
                   _buildNavItem(
                     context,
                     icon: Icons.business_rounded,
@@ -146,6 +158,7 @@ class _AppDrawerState extends State<AppDrawer> {
                     route: 'contacts',
                     destination: const BusinessContactsScreen(),
                   ),
+                if (_hasPermission('Raporlar')) ...[
                   _buildNavItem(
                     context,
                     icon: Icons.bar_chart_rounded,
@@ -160,6 +173,8 @@ class _AppDrawerState extends State<AppDrawer> {
                     route: 'currencies',
                     destination: const CurrenciesScreen(),
                   ),
+                ],
+                if (_hasPermission('Faturalar'))
                   _buildNavItem(
                     context,
                     icon: Icons.description_rounded,
@@ -167,7 +182,6 @@ class _AppDrawerState extends State<AppDrawer> {
                     route: 'quotes',
                     destination: const QuotesScreen(),
                   ),
-                ],
                 const Divider(height: 1),
               ],
             ),

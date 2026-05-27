@@ -18,4 +18,15 @@ namespace AccountingApp.API.DTOs
         [Required]
         public int DepartmentId { get; set; }
     }
+
+    public class CurrencyCreateDto
+    {
+        [Required]
+        [MaxLength(3)]
+        [MinLength(3)]
+        public string Code { get; set; } = string.Empty;
+
+        [MaxLength(5)]
+        public string? Symbol { get; set; }
+    }
 }

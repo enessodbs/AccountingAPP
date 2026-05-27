@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import '../widgets/custom_toast.dart';
 import '../services/crm_service.dart';
 import '../models/crm_models.dart';
 import '../widgets/responsive_scaffold.dart';
@@ -43,9 +44,7 @@ class _PipelineBoardScreenState extends State<PipelineBoardScreen> {
       // Removed snackbar to prevent blocking the UI
     } catch (e) {
       if (mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text('Hata: $e'), backgroundColor: Colors.red),
-        );
+        CustomToast.showError(context, 'Hata: $e');
       }
     }
   }
@@ -557,7 +556,7 @@ class _PipelineBoardScreenState extends State<PipelineBoardScreen> {
                                               selectedContactId = newContact.id;
                                             });
                                           } catch (e) {
-                                            ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(e.toString())));
+                                            CustomToast.showError(context, e.toString());
                                           }
                                         },
                                         child: const Text('Ekle'),
@@ -610,7 +609,7 @@ class _PipelineBoardScreenState extends State<PipelineBoardScreen> {
               FilledButton(
                 onPressed: () async {
                   if (titleCtl.text.isEmpty || selectedContactId == null) {
-                    ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text('Lütfen başlık ve müşteri seçin')));
+                    CustomToast.showError(context, 'Lütfen başlık ve müşteri seçin');
                     return;
                   }
                   try {
@@ -626,9 +625,7 @@ class _PipelineBoardScreenState extends State<PipelineBoardScreen> {
                     _loadBoard();
                   } catch (e) {
                     if (mounted) {
-                      ScaffoldMessenger.of(context).showSnackBar(
-                        SnackBar(content: Text('Hata: $e')),
-                      );
+                      CustomToast.showError(context, 'Hata: $e');
                     }
                   }
                 },

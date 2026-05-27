@@ -20,5 +20,8 @@ namespace AccountingApp.API.Models
 
         /// <summary>Bu role sahip kullanıcılar (çoka-çok ilişki).</summary>
         public ICollection<UserRole> UserRoles { get; set; } = new List<UserRole>();
+
+        /// <summary>Rolün erişebileceği modüllerin/izinlerin listesi (virgülle ayrılmış string).</summary>
+        public string Permissions { get; set; } = string.Empty;
     }
 }

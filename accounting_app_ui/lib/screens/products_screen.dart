@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import '../widgets/custom_toast.dart';
 import 'package:simple_barcode_scanner/simple_barcode_scanner.dart';
 import '../models/product.dart';
 import '../models/employee.dart';
@@ -52,9 +53,7 @@ class _ProductsScreenState extends State<ProductsScreen> {
     } catch (e) {
       setState(() => _isLoading = false);
       if (mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text(e.toString().replaceAll('Exception: ', '')), backgroundColor: Colors.red[700]),
-        );
+        CustomToast.showError(context, e.toString().replaceAll('Exception: ', ''));
       }
     }
   }
@@ -260,14 +259,12 @@ class _ProductsScreenState extends State<ProductsScreen> {
         await _productService.deleteProduct(product.id);
         _loadData();
         if (mounted) {
-          ScaffoldMessenger.of(context).showSnackBar(
-            const SnackBar(content: Text('Ürün silindi'), backgroundColor: Colors.green),
-          );
+          CustomToast.showSuccess(context, 'Ürün silindi');
         }
         return true;
       } catch (e) {
         if (mounted) {
-          ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(e.toString()), backgroundColor: Colors.red));
+          CustomToast.showError(context, e.toString());
         }
       }
     }
@@ -428,9 +425,7 @@ class _ProductsScreenState extends State<ProductsScreen> {
                                           final created = await _lookupService.createCategory(nameCtrl.text.trim());
                                           if (ctx2.mounted) Navigator.pop(ctx2, created);
                                         } catch (e) {
-                                          if (ctx2.mounted) {
-                                            ScaffoldMessenger.of(ctx2).showSnackBar(SnackBar(content: Text(e.toString()), backgroundColor: Colors.red));
-                                          }
+                                            CustomToast.showError(ctx2, e.toString());
                                         }
                                       },
                                       child: const Text('Ekle'),
@@ -473,13 +468,11 @@ class _ProductsScreenState extends State<ProductsScreen> {
                       if (mounted) Navigator.pop(ctx);
                       _loadData();
                       if (mounted) {
-                        ScaffoldMessenger.of(context).showSnackBar(
-                          const SnackBar(content: Text('Ürün oluşturuldu'), backgroundColor: Colors.green),
-                        );
+                        CustomToast.showSuccess(context, 'Ürün oluşturuldu');
                       }
                     } catch (e) {
                       if (mounted) {
-                        ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(e.toString()), backgroundColor: Colors.red));
+                        CustomToast.showError(context, e.toString());
                       }
                     }
                   },

@@ -1,6 +1,8 @@
+import '../widgets/custom_toast.dart';
 import 'package:flutter/material.dart';
 import '../widgets/responsive_scaffold.dart';
 import '../services/user_management_service.dart';
+import '../services/role_service.dart';
 import '../l10n/app_localizations.dart';
 
 class UserManagementScreen extends StatefulWidget {
@@ -13,6 +15,7 @@ class UserManagementScreen extends StatefulWidget {
 class _UserManagementScreenState extends State<UserManagementScreen>
     with SingleTickerProviderStateMixin {
   final _service = UserManagementService();
+  final _roleService = RoleService();
   List<Map<String, dynamic>> _users = [];
   List<Map<String, dynamic>> _allRoles = [];
   bool _isLoading = true;
@@ -24,6 +27,9 @@ class _UserManagementScreenState extends State<UserManagementScreen>
   void initState() {
     super.initState();
     _tabController = TabController(length: 2, vsync: this);
+    _tabController.addListener(() {
+      setState(() {});
+    });
     _loadData();
   }
 
@@ -38,7 +44,7 @@ class _UserManagementScreenState extends State<UserManagementScreen>
     try {
       final results = await Future.wait([
         _service.getUsers(),
-        _service.getRoles(),
+        _roleService.getRoles(),
       ]);
       setState(() {
         _users = results[0];
@@ -109,13 +115,21 @@ class _UserManagementScreenState extends State<UserManagementScreen>
           tooltip: l.get('refresh'),
         ),
       ],
-      floatingActionButton: FloatingActionButton.extended(
-        onPressed: () => _showCreateUserDialog(context, l, theme),
-        icon: const Icon(Icons.person_add_alt_1_rounded),
-        label: Text(l.get('addUser')),
-        backgroundColor: theme.colorScheme.primary,
-        foregroundColor: Colors.white,
-      ),
+      floatingActionButton: _tabController.index == 0 
+        ? FloatingActionButton.extended(
+            onPressed: () => _showCreateUserDialog(context, l, theme),
+            icon: const Icon(Icons.person_add_alt_1_rounded),
+            label: Text(l.get('addUser')),
+            backgroundColor: theme.colorScheme.primary,
+            foregroundColor: Colors.white,
+          )
+        : FloatingActionButton.extended(
+            onPressed: () => _showAddRoleDialog(context, l, theme),
+            icon: const Icon(Icons.security),
+            label: const Text('Rol Ekle'),
+            backgroundColor: theme.colorScheme.secondary,
+            foregroundColor: Colors.white,
+          ),
       bottom: TabBar(
         controller: _tabController,
         labelColor: Colors.white,
@@ -470,6 +484,18 @@ class _UserManagementScreenState extends State<UserManagementScreen>
                       ],
                     ),
                   ),
+                  if (roleName != 'Admin')
+                    IconButton(
+                      icon: const Icon(Icons.edit_rounded, size: 20),
+                      color: theme.colorScheme.primary,
+                      onPressed: () => _showEditRoleDialog(context, role, l, theme),
+                    ),
+                  if (roleName != 'Admin')
+                    IconButton(
+                      icon: const Icon(Icons.delete_outline, size: 20),
+                      color: theme.colorScheme.error,
+                      onPressed: () => _confirmDeleteRole(role),
+                    ),
                 ],
               ),
             ),
@@ -592,16 +618,12 @@ class _UserManagementScreenState extends State<UserManagementScreen>
     try {
       final success = await _service.updateUserRoles(userId, roles);
       if (success && mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text(l.get('rolesUpdated')), backgroundColor: Colors.green),
-        );
+        CustomToast.showSuccess(context, l.get('rolesUpdated'));
         _loadData();
       }
     } catch (e) {
       if (mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text('${l.get('error')}: ${e.toString().replaceAll('Exception: ', '')}'), backgroundColor: Colors.red),
-        );
+        CustomToast.showError(context, '${l.get("error")}: $e');
       }
     }
   }
@@ -635,16 +657,12 @@ class _UserManagementScreenState extends State<UserManagementScreen>
               try {
                 await _service.deleteUser(user['id']);
                 if (mounted) {
-                  ScaffoldMessenger.of(context).showSnackBar(
-                    SnackBar(content: Text(l.get('userDeleted')), backgroundColor: Colors.green),
-                  );
+                  CustomToast.showSuccess(context, l.get('userDeleted'));
                   _loadData();
                 }
               } catch (e) {
                 if (mounted) {
-                  ScaffoldMessenger.of(context).showSnackBar(
-                    SnackBar(content: Text(e.toString().replaceAll('Exception: ', '')), backgroundColor: Colors.red),
-                  );
+                  CustomToast.showSuccess(context, e.toString());
                 }
               }
             },
@@ -753,9 +771,7 @@ class _UserManagementScreenState extends State<UserManagementScreen>
                 ElevatedButton.icon(
                   onPressed: () async {
                     if (usernameCtrl.text.isEmpty || emailCtrl.text.isEmpty || passwordCtrl.text.isEmpty || selectedRole == null) {
-                      ScaffoldMessenger.of(context).showSnackBar(
-                        SnackBar(content: Text(l.get('fillAllFields')), backgroundColor: Colors.orange),
-                      );
+                      CustomToast.showSuccess(context, l.get('fillAllFields'));
                       return;
                     }
                     Navigator.pop(ctx);
@@ -767,16 +783,12 @@ class _UserManagementScreenState extends State<UserManagementScreen>
                         roleName: selectedRole!,
                       );
                       if (mounted) {
-                        ScaffoldMessenger.of(context).showSnackBar(
-                          SnackBar(content: Text(l.get('userCreated')), backgroundColor: Colors.green),
-                        );
+                        CustomToast.showSuccess(context, l.get('userCreated'));
                         _loadData();
                       }
                     } catch (e) {
                       if (mounted) {
-                        ScaffoldMessenger.of(context).showSnackBar(
-                          SnackBar(content: Text(e.toString().replaceAll('Exception: ', '')), backgroundColor: Colors.red),
-                        );
+                        CustomToast.showSuccess(context, e.toString());
                       }
                     }
                   },
@@ -852,9 +864,7 @@ class _UserManagementScreenState extends State<UserManagementScreen>
                           final newUsername = usernameCtrl.text.trim();
                           final newEmail = emailCtrl.text.trim();
                           if (newUsername.isEmpty || newEmail.isEmpty) {
-                            ScaffoldMessenger.of(context).showSnackBar(
-                              SnackBar(content: Text(l.get('fillAllFields')), backgroundColor: Colors.orange),
-                            );
+                            CustomToast.showSuccess(context, l.get('fillAllFields'));
                             return;
                           }
                           setDialogState(() => isSaving = true);
@@ -866,17 +876,13 @@ class _UserManagementScreenState extends State<UserManagementScreen>
                             );
                             if (ctx.mounted) Navigator.pop(ctx);
                             if (mounted) {
-                              ScaffoldMessenger.of(context).showSnackBar(
-                                SnackBar(content: Text(msg), backgroundColor: Colors.green),
-                              );
+                              CustomToast.showSuccess(context, msg);
                               _loadData();
                             }
                           } catch (e) {
                             setDialogState(() => isSaving = false);
                             if (mounted) {
-                              ScaffoldMessenger.of(context).showSnackBar(
-                                SnackBar(content: Text('$e'), backgroundColor: Colors.red),
-                              );
+                              CustomToast.showSuccess(context, '$e');
                             }
                           }
                         },
@@ -987,15 +993,11 @@ class _UserManagementScreenState extends State<UserManagementScreen>
                           final pw = passwordCtrl.text;
                           final confirm = confirmCtrl.text;
                           if (pw.isEmpty || pw.length < 6) {
-                            ScaffoldMessenger.of(context).showSnackBar(
-                              SnackBar(content: Text(l.get('passwordMinLength')), backgroundColor: Colors.orange),
-                            );
+                            CustomToast.showSuccess(context, l.get('passwordMinLength'));
                             return;
                           }
                           if (pw != confirm) {
-                            ScaffoldMessenger.of(context).showSnackBar(
-                              SnackBar(content: Text(l.get('passwordsDoNotMatch')), backgroundColor: Colors.red),
-                            );
+                            CustomToast.showSuccess(context, l.get('passwordsDoNotMatch'));
                             return;
                           }
                           setDialogState(() => isSaving = true);
@@ -1003,16 +1005,12 @@ class _UserManagementScreenState extends State<UserManagementScreen>
                             final msg = await _service.resetPassword(user['id'], pw);
                             if (ctx.mounted) Navigator.pop(ctx);
                             if (mounted) {
-                              ScaffoldMessenger.of(context).showSnackBar(
-                                SnackBar(content: Text(msg), backgroundColor: Colors.green),
-                              );
+                              CustomToast.showSuccess(context, msg);
                             }
                           } catch (e) {
                             setDialogState(() => isSaving = false);
                             if (mounted) {
-                              ScaffoldMessenger.of(context).showSnackBar(
-                                SnackBar(content: Text('$e'), backgroundColor: Colors.red),
-                              );
+                              CustomToast.showSuccess(context, '$e');
                             }
                           }
                         },
@@ -1027,5 +1025,190 @@ class _UserManagementScreenState extends State<UserManagementScreen>
         );
       },
     );
+  }
+
+  void _showAddRoleDialog(BuildContext context, AppLocalizations l, ThemeData theme) {
+    final formKey = GlobalKey<FormState>();
+    final ctrl = TextEditingController();
+    
+    final Map<String, String> availablePermissions = {
+      'Personeller': 'Personel Yönetimi',
+      'Faturalar': 'Fatura Yönetimi',
+      'Urunler': 'Ürün/Hizmet Yönetimi',
+      'IsOrtaklari': 'Müşteri/Tedarikçi Yönetimi',
+      'Raporlar': 'Raporlar',
+      'KullaniciYonetimi': 'Kullanıcı ve Rol Yönetimi',
+    };
+    final selectedPermissions = <String>[];
+
+    showDialog(
+      context: context,
+      builder: (ctx) => StatefulBuilder(
+        builder: (context, setState) {
+          return AlertDialog(
+            title: const Text('Yeni Rol Ekle'),
+            content: Form(
+              key: formKey,
+              child: SingleChildScrollView(
+                child: Column(
+                  mainAxisSize: MainAxisSize.min,
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    TextFormField(
+                      controller: ctrl,
+                      decoration: const InputDecoration(labelText: 'Rol Adı (Örn: Editör)'),
+                      validator: (v) => v == null || v.isEmpty ? 'Gerekli' : null,
+                    ),
+                    const SizedBox(height: 16),
+                    const Text('Yetkiler:', style: TextStyle(fontWeight: FontWeight.bold)),
+                    const SizedBox(height: 8),
+                    ...availablePermissions.entries.map((entry) {
+                      return CheckboxListTile(
+                        title: Text(entry.value),
+                        value: selectedPermissions.contains(entry.key),
+                        onChanged: (val) {
+                          setState(() {
+                            if (val == true) {
+                              selectedPermissions.add(entry.key);
+                            } else {
+                              selectedPermissions.remove(entry.key);
+                            }
+                          });
+                        },
+                        controlAffinity: ListTileControlAffinity.leading,
+                        dense: true,
+                        contentPadding: EdgeInsets.zero,
+                      );
+                    }).toList(),
+                  ],
+                ),
+              ),
+            ),
+            actions: [
+              TextButton(onPressed: () => Navigator.pop(ctx), child: const Text('İptal')),
+              FilledButton(
+                onPressed: () async {
+                  if (formKey.currentState!.validate()) {
+                    try {
+                      await _roleService.addRole(ctrl.text, selectedPermissions);
+                      if (mounted) { Navigator.pop(ctx); _loadData(); }
+                    } catch (e) {
+                      if (mounted) CustomToast.showSuccess(context, e.toString());
+                    }
+                  }
+                },
+                child: const Text('Ekle'),
+              ),
+            ],
+          );
+        }
+      ),
+    );
+  }
+
+  void _showEditRoleDialog(BuildContext context, Map<String, dynamic> role, AppLocalizations l, ThemeData theme) {
+    final formKey = GlobalKey<FormState>();
+    final ctrl = TextEditingController(text: role['name'] ?? '');
+    
+    final Map<String, String> availablePermissions = {
+      'Personeller': 'Personel Yönetimi',
+      'Faturalar': 'Fatura Yönetimi',
+      'Urunler': 'Ürün/Hizmet Yönetimi',
+      'IsOrtaklari': 'Müşteri/Tedarikçi Yönetimi',
+      'Raporlar': 'Raporlar',
+      'KullaniciYonetimi': 'Kullanıcı ve Rol Yönetimi',
+    };
+    
+    final permissionsRaw = role['permissions'] ?? role['Permissions'];
+    final selectedPermissions = (permissionsRaw as List?)?.map((p) => p.toString()).toList() ?? [];
+
+    showDialog(
+      context: context,
+      builder: (ctx) => StatefulBuilder(
+        builder: (context, setState) {
+          return AlertDialog(
+            title: const Text('Rol Düzenle'),
+            content: Form(
+              key: formKey,
+              child: SingleChildScrollView(
+                child: Column(
+                  mainAxisSize: MainAxisSize.min,
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    TextFormField(
+                      controller: ctrl,
+                      decoration: const InputDecoration(labelText: 'Rol Adı'),
+                      validator: (v) => v == null || v.isEmpty ? 'Gerekli' : null,
+                    ),
+                    const SizedBox(height: 16),
+                    const Text('Yetkiler:', style: TextStyle(fontWeight: FontWeight.bold)),
+                    const SizedBox(height: 8),
+                    ...availablePermissions.entries.map((entry) {
+                      return CheckboxListTile(
+                        title: Text(entry.value),
+                        value: selectedPermissions.contains(entry.key),
+                        onChanged: (val) {
+                          setState(() {
+                            if (val == true) {
+                              selectedPermissions.add(entry.key);
+                            } else {
+                              selectedPermissions.remove(entry.key);
+                            }
+                          });
+                        },
+                        controlAffinity: ListTileControlAffinity.leading,
+                        dense: true,
+                        contentPadding: EdgeInsets.zero,
+                      );
+                    }).toList(),
+                  ],
+                ),
+              ),
+            ),
+            actions: [
+              TextButton(onPressed: () => Navigator.pop(ctx), child: const Text('İptal')),
+              FilledButton(
+                onPressed: () async {
+                  if (formKey.currentState!.validate()) {
+                    try {
+                      await _roleService.updateRole(role['id'].toString(), ctrl.text, selectedPermissions);
+                      if (mounted) { Navigator.pop(ctx); _loadData(); }
+                    } catch (e) {
+                      if (mounted) CustomToast.showSuccess(context, e.toString());
+                    }
+                  }
+                },
+                child: const Text('Kaydet'),
+              ),
+            ],
+          );
+        },
+      ),
+    );
+  }
+
+  void _confirmDeleteRole(Map<String, dynamic> role) async {
+    final res = await showDialog<bool>(
+      context: context,
+      builder: (ctx) => AlertDialog(
+        title: const Text('Rolü Sil'),
+        content: Text('${role['name']} silinecek. Emin misiniz?'),
+        actions: [
+          TextButton(onPressed: () => Navigator.pop(ctx, false), child: const Text('İptal')),
+          TextButton(
+            onPressed: () => Navigator.pop(ctx, true),
+            child: const Text('Sil', style: TextStyle(color: Colors.red)),
+          ),
+        ],
+      ),
+    );
+    if (res == true) {
+      try {
+        await _roleService.deleteRole(role['id'].toString());
+        _loadData();
+      } catch (e) {
+        if (mounted) CustomToast.showSuccess(context, e.toString());
+      }
+    }
   }
 }

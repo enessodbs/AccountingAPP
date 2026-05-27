@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import '../widgets/custom_toast.dart';
 import 'package:simple_barcode_scanner/simple_barcode_scanner.dart';
 import '../models/product.dart';
 import '../services/product_service.dart';
@@ -66,9 +67,7 @@ class _BarcodeStockEntryScreenState extends State<BarcodeStockEntryScreen> {
     if (_foundProduct == null) return;
     final qty = double.tryParse(_quantityController.text) ?? 0;
     if (qty <= 0) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('Geçerli bir miktar girin'), backgroundColor: Colors.orange),
-      );
+      CustomToast.showError(context, 'Geçerli bir miktar girin');
       return;
     }
 
@@ -96,20 +95,15 @@ class _BarcodeStockEntryScreenState extends State<BarcodeStockEntryScreen> {
           _quantityController.text = '1';
         });
 
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(
-            content: Text(
-              '${record.productName}: ${_isStockIn ? "+" : "-"}${qty.toStringAsFixed(0)} adet',
-            ),
-            backgroundColor: _isStockIn ? Colors.green : Colors.orange,
-          ),
-        );
+        if (_isStockIn) {
+          CustomToast.showSuccess(context, '${record.productName}: +${qty.toStringAsFixed(0)} adet');
+        } else {
+          CustomToast.showError(context, '${record.productName}: -${qty.toStringAsFixed(0)} adet');
+        }
       }
     } catch (e) {
       if (mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text(e.toString()), backgroundColor: Colors.red),
-        );
+        CustomToast.showError(context, e.toString());
       }
     }
   }

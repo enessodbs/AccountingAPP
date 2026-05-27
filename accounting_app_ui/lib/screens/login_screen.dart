@@ -1,3 +1,4 @@
+import '../widgets/custom_toast.dart';
 import 'package:flutter/material.dart';
 import 'package:url_launcher/url_launcher.dart';
 import '../services/auth_service.dart';
@@ -626,12 +627,7 @@ class _LoginScreenState extends State<LoginScreen> {
                   : () async {
                       final email = emailController.text.trim();
                       if (!email.contains('@')) {
-                        ScaffoldMessenger.of(context).showSnackBar(
-                          const SnackBar(
-                            content: Text('Lütfen geçerli bir e-posta adresi girin.'),
-                            backgroundColor: Colors.redAccent,
-                          ),
-                        );
+                        CustomToast.showSuccess(context, 'Lütfen geçerli bir e-posta adresi girin.');
                         return;
                       }
 
@@ -639,20 +635,7 @@ class _LoginScreenState extends State<LoginScreen> {
                       final message = await _authService.requestPasswordReset(email);
                       if (ctx.mounted) Navigator.pop(ctx);
                       if (context.mounted) {
-                        ScaffoldMessenger.of(context).showSnackBar(
-                          SnackBar(
-                            content: Row(
-                              children: [
-                                const Icon(Icons.check_circle, color: Colors.white, size: 18),
-                                const SizedBox(width: 8),
-                                Expanded(child: Text(message)),
-                              ],
-                            ),
-                            backgroundColor: const Color(0xFF23315B),
-                            behavior: SnackBarBehavior.floating,
-                            shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
-                          ),
-                        );
+                        CustomToast.showSuccess(context, message);
                       }
                     },
               child: isSending
@@ -826,12 +809,9 @@ class _LoginScreenState extends State<LoginScreen> {
                 await launchUrl(emailUri);
               } else {
                 if (context.mounted) {
-                  ScaffoldMessenger.of(context).showSnackBar(
-                    const SnackBar(
-                      content: Text(
-                        'destek@muhasebesistemi.com adresine yazın.',
-                      ),
-                    ),
+                  CustomToast.showSuccess(
+                    context,
+                    'destek@muhasebesistemi.com adresine yazın.',
                   );
                 }
               }

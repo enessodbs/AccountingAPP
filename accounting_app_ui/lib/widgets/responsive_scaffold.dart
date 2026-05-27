@@ -17,7 +17,8 @@ import '../screens/barcode_stock_entry_screen.dart';
 import '../screens/user_management_screen.dart';
 import '../screens/leads_screen.dart';
 import '../screens/pipeline_board_screen.dart';
-
+import '../screens/settings_screen.dart';
+import '../screens/barcode_stock_entry_screen.dart';
 /// A responsive scaffold that shows a persistent side rail on wide screens
 /// and a standard drawer on narrow ones.
 class ResponsiveScaffold extends StatefulWidget {
@@ -44,6 +45,7 @@ class ResponsiveScaffold extends StatefulWidget {
 
 class _ResponsiveScaffoldState extends State<ResponsiveScaffold> {
   List<String> _userRoles = [];
+  List<String> _userPermissions = [];
   bool _isLoadingRoles = true;
   bool _railExtended = true;
 
@@ -54,17 +56,19 @@ class _ResponsiveScaffoldState extends State<ResponsiveScaffold> {
   }
 
   Future<void> _loadRoles() async {
+    final perms = await AuthService().getPermissions();
     final roles = await AuthService().getRoles();
     if (mounted) {
       setState(() {
         _userRoles = roles;
+        _userPermissions = perms;
         _isLoadingRoles = false;
       });
     }
   }
 
-  bool _hasRole(String role) =>
-      _userRoles.contains('Admin') || _userRoles.contains(role);
+  bool _hasPermission(String perm) =>
+      _userRoles.contains('Admin') || _userPermissions.contains(perm);
 
   String _getRoleBadge() {
     if (_userRoles.contains('Admin')) return 'Admin';
@@ -201,25 +205,32 @@ class _ResponsiveScaffoldState extends State<ResponsiveScaffold> {
                 padding: const EdgeInsets.symmetric(vertical: 8),
                 children: [
                   _buildSideNavItem(theme, Icons.dashboard_rounded, l.get('dashboard'), 'dashboard', const DashboardScreen(), extended),
-                  if (_hasRole('İK'))
-                    _buildSideNavItem(theme, Icons.people_rounded, l.get('employees'), 'employees', const EmployeeListScreen(), extended),
-                  if (_hasRole('Muhasebe')) ...[
-                    _buildSideNavItem(theme, Icons.receipt_long_rounded, l.get('invoices'), 'invoices', const InvoicesScreen(), extended),
-                    _buildSideNavItem(theme, Icons.table_chart_rounded, l.get('incomeExpenseTable'), 'incomeExpense', const IncomeExpenseTableScreen(), extended),
-                    _buildSideNavItem(theme, Icons.inventory_2_rounded, l.get('products'), 'products', const ProductsScreen(), extended),
-                    _buildSideNavItem(theme, Icons.qr_code_scanner_rounded, l.get('barcodeStockEntry'), 'barcodeStock', const BarcodeStockEntryScreen(), extended),
-                    _buildSideNavItem(theme, Icons.swap_horiz_rounded, l.get('transactions'), 'transactions', const TransactionsScreen(), extended),
-                    _buildSideNavItem(theme, Icons.business_rounded, l.get('businessContacts'), 'contacts', const BusinessContactsScreen(), extended),
-                    _buildSideNavItem(theme, Icons.bar_chart_rounded, l.get('reports'), 'reports', const ReportsScreen(), extended),
-                    _buildSideNavItem(theme, Icons.currency_exchange_rounded, l.get('currencies'), 'currencies', const CurrenciesScreen(), extended),
-                    _buildSideNavItem(theme, Icons.description_rounded, l.get('quotes'), 'quotes', const QuotesScreen(), extended),
+                  if (_hasPermission('Personeller'))
+                    _buildSideNavItem(theme, Icons.people_rounded, 'Personeller', 'employees', const EmployeeListScreen(), extended),
+                  if (_hasPermission('Faturalar'))
+                    _buildSideNavItem(theme, Icons.receipt_long_rounded, 'Faturalar', 'invoices', const InvoicesScreen(), extended),
+                  if (_hasPermission('Urunler')) ...[
+                    _buildSideNavItem(theme, Icons.inventory_2_rounded, 'Ürünler & Stok', 'products', const ProductsScreen(), extended),
+                    _buildSideNavItem(theme, Icons.qr_code_scanner_rounded, 'Barkod ile Stok', 'barcodeStock', const BarcodeStockEntryScreen(), extended),
                   ],
-                  if (_hasRole('Satış') || _hasRole('SatışYönetici') || _userRoles.contains('Admin')) ...[
+                  if (_hasPermission('Faturalar') || _hasPermission('Urunler'))
+                    _buildSideNavItem(theme, Icons.swap_horiz_rounded, 'İşlemler', 'transactions', const TransactionsScreen(), extended),
+                  if (_hasPermission('IsOrtaklari'))
+                    _buildSideNavItem(theme, Icons.business_rounded, 'İş Ortakları', 'contacts', const BusinessContactsScreen(), extended),
+                  if (_hasPermission('Raporlar')) ...[
+                    _buildSideNavItem(theme, Icons.bar_chart_rounded, 'Raporlar', 'reports', const ReportsScreen(), extended),
+                    _buildSideNavItem(theme, Icons.currency_exchange_rounded, 'Döviz Kurları', 'currencies', const CurrenciesScreen(), extended),
+                  ],
+                  if (_hasPermission('Faturalar'))
+                    _buildSideNavItem(theme, Icons.description_rounded, 'Teklifler', 'quotes', const QuotesScreen(), extended),
+                  if (_hasPermission('Satis')) ...[
                     _buildSideNavItem(theme, Icons.person_search_rounded, l.get('leads'), 'leads', const LeadsScreen(), extended),
                     _buildSideNavItem(theme, Icons.view_kanban_rounded, l.get('pipeline'), 'pipeline', const PipelineBoardScreen(), extended),
                   ],
-                  if (_userRoles.contains('Admin'))
+                  if (_hasPermission('KullaniciYonetimi') || _userRoles.contains('Admin'))
                     _buildSideNavItem(theme, Icons.admin_panel_settings_rounded, l.get('userManagement'), 'userManagement', const UserManagementScreen(), extended),
+                  if (_userRoles.contains('Admin'))
+                    _buildSideNavItem(theme, Icons.settings_rounded, 'Sistem Ayarları', 'settings', const SettingsScreen(), extended),
                 ],
               ),
             ),
@@ -405,25 +416,30 @@ class _ResponsiveScaffoldState extends State<ResponsiveScaffold> {
                 padding: EdgeInsets.zero,
                 children: [
                   _buildDrawerItem(context, theme, Icons.dashboard_rounded, l.get('dashboard'), 'dashboard', const DashboardScreen()),
-                  if (_hasRole('İK'))
+                  if (_hasPermission('Personeller'))
                     _buildDrawerItem(context, theme, Icons.people_rounded, l.get('employees'), 'employees', const EmployeeListScreen()),
-                  if (_hasRole('Muhasebe')) ...[
+                  if (_hasPermission('Faturalar'))
                     _buildDrawerItem(context, theme, Icons.receipt_long_rounded, l.get('invoices'), 'invoices', const InvoicesScreen()),
-                    _buildDrawerItem(context, theme, Icons.table_chart_rounded, l.get('incomeExpenseTable'), 'incomeExpense', const IncomeExpenseTableScreen()),
+                  if (_hasPermission('Urunler'))
                     _buildDrawerItem(context, theme, Icons.inventory_2_rounded, l.get('products'), 'products', const ProductsScreen()),
-                    _buildDrawerItem(context, theme, Icons.qr_code_scanner_rounded, l.get('barcodeStockEntry'), 'barcodeStock', const BarcodeStockEntryScreen()),
+                  if (_hasPermission('Faturalar') || _hasPermission('Urunler'))
                     _buildDrawerItem(context, theme, Icons.swap_horiz_rounded, l.get('transactions'), 'transactions', const TransactionsScreen()),
+                  if (_hasPermission('IsOrtaklari'))
                     _buildDrawerItem(context, theme, Icons.business_rounded, l.get('businessContacts'), 'contacts', const BusinessContactsScreen()),
+                  if (_hasPermission('Raporlar')) ...[
                     _buildDrawerItem(context, theme, Icons.bar_chart_rounded, l.get('reports'), 'reports', const ReportsScreen()),
                     _buildDrawerItem(context, theme, Icons.currency_exchange_rounded, l.get('currencies'), 'currencies', const CurrenciesScreen()),
-                    _buildDrawerItem(context, theme, Icons.description_rounded, l.get('quotes'), 'quotes', const QuotesScreen()),
                   ],
-                  if (_hasRole('Satış') || _hasRole('SatışYönetici') || _userRoles.contains('Admin')) ...[
+                  if (_hasPermission('Faturalar'))
+                    _buildDrawerItem(context, theme, Icons.description_rounded, l.get('quotes'), 'quotes', const QuotesScreen()),
+                  if (_hasPermission('Satis')) ...[
                     _buildDrawerItem(context, theme, Icons.person_search_rounded, l.get('leads'), 'leads', const LeadsScreen()),
                     _buildDrawerItem(context, theme, Icons.view_kanban_rounded, l.get('pipeline'), 'pipeline', const PipelineBoardScreen()),
                   ],
-                  if (_userRoles.contains('Admin'))
+                  if (_hasPermission('KullaniciYonetimi') || _userRoles.contains('Admin'))
                     _buildDrawerItem(context, theme, Icons.admin_panel_settings_rounded, l.get('userManagement'), 'userManagement', const UserManagementScreen()),
+                  if (_userRoles.contains('Admin'))
+                    _buildDrawerItem(context, theme, Icons.settings_rounded, 'Sistem Ayarları', 'settings', const SettingsScreen()),
                   const Divider(height: 1),
                 ],
               ),

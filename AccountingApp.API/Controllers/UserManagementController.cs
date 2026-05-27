@@ -13,7 +13,7 @@ namespace AccountingApp.API.Controllers
     /// </summary>
     [Route("api/[controller]")]
     [ApiController]
-    [Authorize(Roles = "Admin")]
+    [Authorize(Policy = "RequireUserManagement")]
     public class UserManagementController : ControllerBase
     {
         private readonly AppDbContext _context;

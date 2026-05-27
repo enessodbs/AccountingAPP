@@ -10,7 +10,7 @@ namespace AccountingApp.API.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
-    [Authorize(Roles = "Admin,Muhasebe")]
+    [Authorize]
     public class BusinessContactsController : ControllerBase
     {
         private readonly AppDbContext _context;
@@ -47,7 +47,7 @@ namespace AccountingApp.API.Controllers
         }
 
         [HttpPost]
-        [Authorize]
+        [Authorize(Roles = "Admin,Satış,Muhasebe")]
         public async Task<ActionResult<BusinessContactDto>> PostContact(BusinessContactCreateDto dto)
         {
             var contact = _mapper.Map<BusinessContact>(dto);
@@ -60,8 +60,8 @@ namespace AccountingApp.API.Controllers
                 _mapper.Map<BusinessContactDto>(contact));
         }
 
-        [HttpPut("{id}")]
-        [Authorize]
+        [HttpPut("{id:guid}")]
+        [Authorize(Roles = "Admin,Satış,Muhasebe")]
         public async Task<IActionResult> PutContact(Guid id, BusinessContactCreateDto dto)
         {
             var contact = await _context.BusinessContacts.FindAsync(id);
@@ -74,8 +74,8 @@ namespace AccountingApp.API.Controllers
             return NoContent();
         }
 
-        [HttpDelete("{id}")]
-        [Authorize]
+        [HttpDelete("{id:guid}")]
+        [Authorize(Roles = "Admin,Satış,Muhasebe")]
         public async Task<IActionResult> DeleteContact(Guid id)
         {
             var contact = await _context.BusinessContacts.FindAsync(id);

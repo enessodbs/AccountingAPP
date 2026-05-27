@@ -1,5 +1,6 @@
 import 'dart:convert';
 import 'package:flutter/material.dart';
+import '../widgets/custom_toast.dart';
 import 'package:http/http.dart' as http;
 import '../config/api_config.dart';
 import '../services/auth_service.dart';
@@ -156,16 +157,12 @@ class _BusinessContactsScreenState extends State<BusinessContactsScreen> {
                   await TransactionService().createBusinessContact(nameCtrl.text.trim(), selectedType);
                   if (mounted) {
                     Navigator.pop(ctx);
-                    ScaffoldMessenger.of(context).showSnackBar(
-                      const SnackBar(content: Text('İş ortağı eklendi!'), backgroundColor: Colors.green),
-                    );
+                    CustomToast.showSuccess(context, 'İş ortağı eklendi!');
                   }
                   _loadContacts();
                 } catch (e) {
                   if (mounted) {
-                    ScaffoldMessenger.of(context).showSnackBar(
-                      SnackBar(content: Text(e.toString()), backgroundColor: Colors.red),
-                    );
+                    CustomToast.showError(context, e.toString());
                   }
                 }
               },

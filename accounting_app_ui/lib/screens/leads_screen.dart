@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import '../widgets/custom_toast.dart';
 import 'package:flutter/services.dart';
 import 'package:intl/intl.dart';
 import '../models/crm_models.dart';
@@ -457,16 +458,12 @@ class _LeadsScreenState extends State<LeadsScreen> {
         await _crmService.deleteLead(lead.id);
         _loadData();
         if (mounted) {
-          ScaffoldMessenger.of(context).showSnackBar(
-            const SnackBar(content: Text('Lead silindi'), backgroundColor: Colors.green),
-          );
+          CustomToast.showSuccess(context, 'Lead silindi');
         }
         return true;
       } catch (e) {
         if (mounted) {
-          ScaffoldMessenger.of(context).showSnackBar(
-            SnackBar(content: Text(e.toString()), backgroundColor: Colors.red),
-          );
+          CustomToast.showError(context, e.toString());
         }
       }
     }
@@ -530,16 +527,12 @@ class _LeadsScreenState extends State<LeadsScreen> {
                   
                   if (ctx.mounted) {
                     Navigator.pop(ctx);
-                    ScaffoldMessenger.of(context).showSnackBar(
-                      const SnackBar(content: Text('Tebrikler! Müşteri adayı başarıyla müşteriye (iş ortağına) dönüştürüldü.'), backgroundColor: Colors.green),
-                    );
+                    CustomToast.showSuccess(context, 'Tebrikler! Müşteri adayı başarıyla müşteriye (iş ortağına) dönüştürüldü.');
                   }
                   _loadData();
                 } catch (e) {
                   if (mounted) {
-                    ScaffoldMessenger.of(context).showSnackBar(
-                      SnackBar(content: Text(e.toString()), backgroundColor: Colors.red),
-                    );
+                    CustomToast.showError(context, e.toString());
                   }
                 }
               },
@@ -720,15 +713,11 @@ class _LeadsScreenState extends State<LeadsScreen> {
                       if (mounted) Navigator.pop(ctx);
                       _loadData();
                       if (mounted) {
-                        ScaffoldMessenger.of(context).showSnackBar(
-                          const SnackBar(content: Text('Lead oluşturuldu'), backgroundColor: Colors.green),
-                        );
+                        CustomToast.showSuccess(context, 'Lead oluşturuldu');
                       }
                     } catch (e) {
                       if (mounted) {
-                        ScaffoldMessenger.of(context).showSnackBar(
-                          SnackBar(content: Text(e.toString()), backgroundColor: Colors.red),
-                        );
+                        CustomToast.showError(context, e.toString());
                       }
                     }
                   },

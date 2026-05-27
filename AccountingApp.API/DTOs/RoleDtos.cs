@@ -13,6 +13,7 @@ namespace AccountingApp.API.DTOs
         public string Name { get; set; } = string.Empty;
         public string? Description { get; set; }
         public int UserCount { get; set; }
+        public List<string> Permissions { get; set; } = new();
     }
 
     // ======================== Rol Detay ========================
@@ -27,6 +28,7 @@ namespace AccountingApp.API.DTOs
         public DateTime CreatedAt { get; set; }
         public DateTime? UpdatedAt { get; set; }
         public int UserCount { get; set; }
+        public List<string> Permissions { get; set; } = new();
         public List<RoleUserDto> Users { get; set; } = new();
     }
 
@@ -51,6 +53,8 @@ namespace AccountingApp.API.DTOs
         /// <summary>Rolün açıklaması (opsiyonel).</summary>
         [StringLength(200, ErrorMessage = "Açıklama en fazla 200 karakter olabilir.")]
         public string? Description { get; set; }
+
+        public List<string> Permissions { get; set; } = new();
     }
 
     // ======================== Rol Güncelleme ========================
@@ -63,5 +67,7 @@ namespace AccountingApp.API.DTOs
 
         [StringLength(200, ErrorMessage = "Açıklama en fazla 200 karakter olabilir.")]
         public string? Description { get; set; }
+
+        public List<string>? Permissions { get; set; }
     }
 }

@@ -56,6 +56,14 @@ builder.Services.AddAuthentication(options =>
     };
 });
 
+builder.Services.AddAuthorization(options =>
+{
+    options.AddPolicy("RequireUserManagement", policy =>
+        policy.RequireAssertion(context =>
+            context.User.IsInRole("Admin") || 
+            context.User.HasClaim(c => c.Type == "Permission" && c.Value == "KullaniciYonetimi")));
+});
+
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.

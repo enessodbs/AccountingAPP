@@ -13,7 +13,7 @@ namespace AccountingApp.API.Controllers
     /// </summary>
     [Route("api/[controller]")]
     [ApiController]
-    [Authorize(Roles = "Admin")]
+    [Authorize(Policy = "RequireUserManagement")]
     public class RolesController : ControllerBase
     {
         private readonly AppDbContext _context;
@@ -39,7 +39,29 @@ namespace AccountingApp.API.Controllers
                     Id = r.Id,
                     Name = r.Name,
                     Description = r.Description,
-                    UserCount = r.UserRoles.Count(ur => ur.User.IsActive)
+                    UserCount = r.UserRoles.Count(ur => ur.User.IsActive),
+                    Permissions = string.IsNullOrEmpty(r.Permissions) ? new List<string>() : r.Permissions.Split(',', StringSplitOptions.RemoveEmptyEntries).ToList()
+                })
+                .ToListAsync();
+
+            return Ok(roles);
+        }
+
+        [AllowAnonymous]
+        [HttpGet("test")]
+        public async Task<ActionResult<List<RoleListDto>>> GetRolesTest()
+        {
+            var roles = await _context.Roles
+                .AsNoTracking()
+                .Where(r => r.IsActive)
+                .OrderBy(r => r.Name)
+                .Select(r => new RoleListDto
+                {
+                    Id = r.Id,
+                    Name = r.Name,
+                    Description = r.Description,
+                    UserCount = r.UserRoles.Count(ur => ur.User.IsActive),
+                    Permissions = string.IsNullOrEmpty(r.Permissions) ? new List<string>() : r.Permissions.Split(',', StringSplitOptions.RemoveEmptyEntries).ToList()
                 })
                 .ToListAsync();
 
@@ -63,6 +85,7 @@ namespace AccountingApp.API.Controllers
                     IsActive = r.IsActive,
                     CreatedAt = r.CreatedAt,
                     UpdatedAt = r.UpdatedAt,
+                    Permissions = string.IsNullOrEmpty(r.Permissions) ? new List<string>() : r.Permissions.Split(',', StringSplitOptions.RemoveEmptyEntries).ToList(),
                     UserCount = r.UserRoles.Count(ur => ur.User.IsActive),
                     Users = r.UserRoles
                         .Where(ur => ur.User.IsActive)
@@ -108,6 +131,7 @@ namespace AccountingApp.API.Controllers
                 Name = dto.Name.Trim(),
                 NormalizedName = normalizedName,
                 Description = dto.Description?.Trim(),
+                Permissions = dto.Permissions != null ? string.Join(",", dto.Permissions) : string.Empty,
                 CreatedAt = DateTime.UtcNow,
                 IsActive = true
             };
@@ -120,6 +144,7 @@ namespace AccountingApp.API.Controllers
                 Id = role.Id,
                 Name = role.Name,
                 Description = role.Description,
+                Permissions = dto.Permissions ?? new List<string>(),
                 UserCount = 0
             };
 
@@ -158,6 +183,12 @@ namespace AccountingApp.API.Controllers
             if (dto.Description != null)
             {
                 role.Description = dto.Description.Trim();
+            }
+
+            // Yetki güncelleme
+            if (dto.Permissions != null)
+            {
+                role.Permissions = string.Join(",", dto.Permissions);
             }
 
             role.UpdatedAt = DateTime.UtcNow;

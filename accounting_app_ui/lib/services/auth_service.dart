@@ -25,6 +25,7 @@ class AuthService {
         await prefs.setString('jwt_token', loginResponse.token);
         await prefs.setString('username', loginResponse.username);
         await prefs.setStringList('roles', loginResponse.roles);
+        await prefs.setStringList('permissions', loginResponse.permissions);
 
         return loginResponse;
       } else if (response.statusCode == 401) {
@@ -45,6 +46,7 @@ class AuthService {
     await prefs.remove('jwt_token');
     await prefs.remove('username');
     await prefs.remove('roles');
+    await prefs.remove('permissions');
   }
 
   Future<String?> getToken() async {
@@ -60,6 +62,30 @@ class AuthService {
   Future<List<String>> getRoles() async {
     final prefs = await SharedPreferences.getInstance();
     return prefs.getStringList('roles') ?? [];
+  }
+
+  Future<List<String>> getPermissions() async {
+    final prefs = await SharedPreferences.getInstance();
+    return prefs.getStringList('permissions') ?? [];
+  }
+
+  Future<bool> hasRole(String role) async {
+    final roles = await getRoles();
+    return roles.contains(role) || roles.contains('Admin'); // Admin has all permissions conceptually, but let's just check normally. Actually better to just check exact string or Admin.
+  }
+
+  Future<bool> hasAnyRole(List<String> allowedRoles) async {
+    final roles = await getRoles();
+    if (roles.contains('Admin')) return true; // Admin has all rights
+    return allowedRoles.any((r) => roles.contains(r));
+  }
+
+  Future<bool> hasPermission(String permission) async {
+    final roles = await getRoles();
+    if (roles.contains('Admin')) return true; // Admin has all rights
+    
+    final perms = await getPermissions();
+    return perms.contains(permission);
   }
 
   // ─── Remember Me ───

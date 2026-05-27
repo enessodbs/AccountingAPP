@@ -4,12 +4,13 @@ using AutoMapper;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using AccountingApp.API.Models;
 
 namespace AccountingApp.API.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
-    [Authorize(Roles = "Admin,Muhasebe,İK")]
+    [Authorize]
     public class CurrenciesController : ControllerBase
     {
         private readonly AppDbContext _context;
@@ -77,6 +78,52 @@ namespace AccountingApp.API.Controllers
             {
                 return StatusCode(500, $"Hata: {ex.Message}");
             }
+        }
+
+        [HttpPost]
+        [Authorize(Roles = "Admin")]
+        public async Task<ActionResult<CurrencyDto>> PostCurrency([FromBody] CurrencyCreateDto dto)
+        {
+            if (!ModelState.IsValid)
+                return BadRequest(ModelState);
+
+            var normalizedCode = dto.Code.Trim().ToUpperInvariant();
+
+            var exists = await _context.Currencies
+                .AnyAsync(c => c.Code == normalizedCode && c.IsActive);
+
+            if (exists)
+                return BadRequest(new { message = $"'{normalizedCode}' kodlu bir döviz zaten mevcut." });
+
+            var currency = new Currency
+            {
+                Code = normalizedCode,
+                Symbol = dto.Symbol?.Trim(),
+                CreatedAt = DateTime.UtcNow,
+                IsActive = true
+            };
+
+            _context.Currencies.Add(currency);
+            await _context.SaveChangesAsync();
+
+            return Ok(_mapper.Map<CurrencyDto>(currency));
+        }
+
+        [HttpDelete("{id:int}")]
+        [Authorize(Roles = "Admin")]
+        public async Task<IActionResult> DeleteCurrency(int id)
+        {
+            var currency = await _context.Currencies.FindAsync(id);
+            if (currency == null) return NotFound();
+
+            if (currency.Code == "TRY" || currency.Code == "USD" || currency.Code == "EUR")
+                return BadRequest(new { message = "Sistem varsayılan kurları silinemez." });
+
+            currency.IsActive = false;
+            currency.UpdatedAt = DateTime.UtcNow;
+            await _context.SaveChangesAsync();
+
+            return NoContent();
         }
     }
 }

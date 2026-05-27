@@ -28,12 +28,12 @@ namespace AccountingApp.API.Data
             var pazarlamaRoleId = Guid.Parse("66666666-6666-6666-6666-666666666600");
 
             modelBuilder.Entity<Role>().HasData(
-                new Role { Id = adminRoleId, Name = "Admin", NormalizedName = "ADMIN", Description = "Tam yetkili sistem yöneticisi", CreatedAt = new DateTime(2025, 1, 1, 0, 0, 0, DateTimeKind.Utc), IsActive = true },
-                new Role { Id = hrRoleId, Name = "İK", NormalizedName = "İK", Description = "İnsan Kaynakları departmanı kullanıcıları", CreatedAt = new DateTime(2025, 1, 1, 0, 0, 0, DateTimeKind.Utc), IsActive = true },
-                new Role { Id = muhasebeRoleId, Name = "Muhasebe", NormalizedName = "MUHASEBE", Description = "Muhasebe ve finans departmanı kullanıcıları", CreatedAt = new DateTime(2025, 1, 1, 0, 0, 0, DateTimeKind.Utc), IsActive = true },
-                new Role { Id = satisRoleId, Name = "Satış", NormalizedName = "SATIŞ", Description = "Satış ekibi kullanıcıları", CreatedAt = new DateTime(2025, 1, 1, 0, 0, 0, DateTimeKind.Utc), IsActive = true },
-                new Role { Id = satisYoneticiRoleId, Name = "SatışYönetici", NormalizedName = "SATIŞYÖNETICI", Description = "Satış ekibi yöneticileri", CreatedAt = new DateTime(2025, 1, 1, 0, 0, 0, DateTimeKind.Utc), IsActive = true },
-                new Role { Id = pazarlamaRoleId, Name = "Pazarlama", NormalizedName = "PAZARLAMA", Description = "Pazarlama departmanı kullanıcıları", CreatedAt = new DateTime(2025, 1, 1, 0, 0, 0, DateTimeKind.Utc), IsActive = true }
+                new Role { Id = adminRoleId, Name = "Admin", NormalizedName = "ADMIN", Description = "Tam yetkili sistem yöneticisi", Permissions = "Personeller,Faturalar,Urunler,IsOrtaklari,Raporlar,KullaniciYonetimi", CreatedAt = new DateTime(2025, 1, 1, 0, 0, 0, DateTimeKind.Utc), IsActive = true },
+                new Role { Id = hrRoleId, Name = "İK", NormalizedName = "İK", Description = "İnsan Kaynakları departmanı kullanıcıları", Permissions = "Personeller", CreatedAt = new DateTime(2025, 1, 1, 0, 0, 0, DateTimeKind.Utc), IsActive = true },
+                new Role { Id = muhasebeRoleId, Name = "Muhasebe", NormalizedName = "MUHASEBE", Description = "Muhasebe ve finans departmanı kullanıcıları", Permissions = "Faturalar,Raporlar,IsOrtaklari", CreatedAt = new DateTime(2025, 1, 1, 0, 0, 0, DateTimeKind.Utc), IsActive = true },
+                new Role { Id = satisRoleId, Name = "Satış", NormalizedName = "SATIŞ", Description = "Satış ekibi kullanıcıları", Permissions = "Faturalar,Urunler,IsOrtaklari", CreatedAt = new DateTime(2025, 1, 1, 0, 0, 0, DateTimeKind.Utc), IsActive = true },
+                new Role { Id = satisYoneticiRoleId, Name = "SatışYönetici", NormalizedName = "SATIŞYÖNETICI", Description = "Satış ekibi yöneticileri", Permissions = "Faturalar,Urunler,IsOrtaklari,Raporlar", CreatedAt = new DateTime(2025, 1, 1, 0, 0, 0, DateTimeKind.Utc), IsActive = true },
+                new Role { Id = pazarlamaRoleId, Name = "Pazarlama", NormalizedName = "PAZARLAMA", Description = "Pazarlama departmanı kullanıcıları", Permissions = "Raporlar", CreatedAt = new DateTime(2025, 1, 1, 0, 0, 0, DateTimeKind.Utc), IsActive = true }
             );
 
             // 4. Seed Admin User (default credentials — change after first login)
