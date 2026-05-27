@@ -1,3 +1,4 @@
+// ignore_for_file: uri_does_not_exist
 import 'dart:convert';
 import 'package:http/http.dart' as http;
 
@@ -8,7 +9,7 @@ void main() async {
   final loginRes = await http.post(
     Uri.parse('$baseUrl/auth/login'),
     headers: {'Content-Type': 'application/json'},
-    body: jsonEncode({'username': 'admin', 'password': 'password'}),
+    body: jsonEncode({'username': 'admin', 'password': '[YOUR_TEST_PASSWORD]'}),
   );
   
   if (loginRes.statusCode != 200) {

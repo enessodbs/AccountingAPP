@@ -24,7 +24,7 @@ void main() async {
       return "l.get('${match.group(1)}'));";
     });
     // Fix 3: '${l.get('error'); -> l.get('error'));
-    if (content.contains("'${l.get('error');")) {
+    if (content.contains("'\${l.get('error');")) {
       // The original was '${l.get('error')} ...'
       // It's probably easier to just replace the whole line:
       content = content.replaceAllMapped(RegExp(r"CustomToast\.showSuccess\(context, '\$\{l\.get\('error'\);[\s\S]*?(?=\})\}"), (match) {

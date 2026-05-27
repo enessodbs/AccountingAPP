@@ -38,7 +38,8 @@ namespace AccountingApp.API.Data
 
             // 4. Seed Admin User (default credentials — change after first login)
             var adminUserId = Guid.Parse("33333333-3333-3333-3333-333333333333");
-            var adminPasswordHash = BCrypt.Net.BCrypt.HashPassword("Admin123!");
+            var adminPassword = Environment.GetEnvironmentVariable("DEFAULT_ADMIN_PASSWORD") ?? "ChangeMe123!";
+            var adminPasswordHash = BCrypt.Net.BCrypt.HashPassword(adminPassword);
 
             modelBuilder.Entity<User>().HasData(
                 new User 
